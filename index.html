@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workshop Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Archivo+Black&family=Noto+Sans+Arabic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#193129;--lime:#b8f200;--bg:#f3f3f3;--paper:#f3f3f3;--ink:#0d0d0d;--olive:#2c5a47;--tan:#e1e1e1;--line:#dcdcdc;--mut:#505050;--bad:#d92d20;--good:#16803c;--warn:#8a5a00;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;color:var(--ink);font:500 16px/1.45 "Archivo","Noto Sans Arabic",Tahoma,sans-serif;background-color:var(--blue);background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:44px 44px;min-height:100vh}
+.hv,h1,h2,.big,.sc,.ht,nav button,th{font-family:"Archivo Black","Noto Sans Arabic",Impact,sans-serif;font-weight:900}
+.mono{font-family:Consolas,monospace}.lb{font-size:13px;color:var(--mut)}
+header{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:12px 18px;background:var(--blue);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header h1{font-size:14px;margin:0 8px 0 0;background:#fff;color:#000;border:2px solid var(--lime);border-radius:999px;padding:5px 14px;text-transform:uppercase}
+header>.lb:not(#save){display:none}
+nav{display:flex;gap:6px;flex-wrap:wrap;width:100%;order:9}
+nav button{border:1.5px solid rgba(255,255,255,.75);background:none;color:#fff;padding:6px 14px;border-radius:999px;cursor:pointer;font-size:12.5px}
+nav button[aria-current=true]{background:var(--lime);border-color:var(--lime);color:#000}
+#save{margin-inline-start:auto;color:#eae4d6;font-size:12px}
+header .tb,header select,header input{border:1.5px solid rgba(255,255,255,.75);background:none;color:#fff;padding:6px 14px;border-radius:999px;cursor:pointer;font:600 14px "Archivo","Noto Sans Arabic",sans-serif}
+header select option{color:#000}header input{cursor:text}header input::placeholder{color:#eae4d6}
+.tb:disabled{opacity:.4;cursor:default}
+#hero{max-width:1100px;margin:6px auto 0;padding:6px 18px 18px;color:#fff}
+.hw{display:flex;align-items:center;gap:14px}
+.ht{font-size:clamp(36px,7.5vw,88px);line-height:.95;text-transform:uppercase;letter-spacing:-.02em;overflow-wrap:anywhere}
+.sq{width:clamp(50px,8vw,100px);flex:none}
+.gl{display:inline-flex;gap:8px;align-items:baseline;margin-top:12px;padding:8px 16px;border-radius:20px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:14px}
+.gl b{font:900 20px "Archivo Black",sans-serif}
+main{padding:18px;max-width:1100px;margin:0 auto 24px;background:#fff;border-radius:32px}
+@media(max-width:700px){main{border-radius:24px;padding:12px;margin-inline:8px}}
+section{background:var(--paper);border-radius:22px;padding:16px;margin-bottom:12px}
+h2{font-size:15px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.01em}
+input,select,textarea{font:inherit;padding:7px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);max-width:100%}
+input:disabled{background:#ececec;color:#777}
+.btn{border:2px solid var(--ink);background:#fff;color:var(--ink);padding:6px 16px;border-radius:999px;cursor:pointer;font:700 14px "Archivo","Noto Sans Arabic",sans-serif}
+.btn.pri{background:var(--lime);border-color:var(--lime)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+table{width:100%;border-collapse:collapse}th{text-align:start;padding:6px 8px;border-bottom:2px solid var(--ink);color:var(--ink);font-size:12px;text-transform:uppercase}
+td{padding:7px 8px;border-bottom:1px solid var(--line)}
+.wrap{overflow-x:auto}
+.big{font-size:34px;line-height:1.05}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.stats>div{flex:1 1 140px;padding:14px 16px;background:var(--paper);border-radius:22px}
+.stats>div:nth-child(1){background:var(--blue);color:#fff}.stats>div:nth-child(1) .lb{color:#eae4d6}
+.stats>div:nth-child(3){background:var(--lime)}.stats>div:nth-child(3) .lb{color:#2c3a00}
+.list{max-width:560px}
+.li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.li .n{flex:1;min-width:0;font-weight:700}
+.pm{width:46px;height:46px;border-radius:50%;border:2px solid #000;font-size:24px;font-weight:900;cursor:pointer;line-height:1}
+.plus{background:var(--lime);color:#000}.minus{background:#000;color:#fff}
+.sc{min-width:48px;text-align:center;font-size:24px}
+.flash{background:color-mix(in srgb,var(--lime) 55%,transparent)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--olive);outline-offset:2px}
+header button:focus-visible,header select:focus-visible,header input:focus-visible{outline-color:var(--lime)}
+a.nm{color:var(--olive);text-decoration:none;cursor:pointer;font-weight:700}
+.tg{display:inline-block;padding:0 9px;border-radius:999px;font-size:12px;font-weight:700;border:1.5px solid currentColor}
+.hi{color:var(--good)}.md{color:var(--warn)}.lo{color:var(--bad)}.mut{color:var(--mut)}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0;cursor:pointer}.bar i{display:block;height:18px;background:var(--olive);border-radius:9px}
+.al{border-inline-start:6px solid var(--warn);padding:8px 12px;margin-bottom:8px;background:#fff;border-radius:12px}
+.al.neg{border-color:var(--bad)}.al.pos{border-color:var(--good)}
+.ch{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+svg text{font:11px "Archivo",sans-serif;fill:var(--ink)}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--olive)}
+.abar{display:flex;gap:8px;align-items:flex-start;background:#fff;border:5px solid #ff1f0f;color:#000;font-weight:600;border-radius:18px;padding:10px 16px;margin:4px 18px 10px}
+.dh{display:inline-block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:22px;line-height:1;padding:6px 8px;border-radius:8px;color:var(--mut)}.dh:hover,.dh:focus-visible{background:var(--tan);color:var(--ink)}.dh:active{cursor:grabbing}
+tr.dragging{opacity:.45}tr.dt-top td{box-shadow:inset 0 3px 0 var(--olive)}tr.dt-bot td{box-shadow:inset 0 -3px 0 var(--olive)}
+.dghost{position:fixed;z-index:80;pointer-events:none;background:var(--lime);color:#000;border:2px solid #000;border-radius:12px;padding:6px 14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:70vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bx{display:inline-flex;align-items:center;gap:4px;border:2px solid var(--line);border-radius:999px;padding:3px 5px;background:#fff}.bx .bl{font-size:11px;font-weight:700;color:var(--mut);padding:0 6px;text-transform:uppercase}.bx button{width:34px;height:34px;border-radius:50%;border:2px solid #000;font:900 18px/1 Archivo,sans-serif;cursor:pointer;padding:0;background:#fff}.bx.bb button:last-of-type{background:var(--olive);color:#fff;border-color:var(--olive)}.bx.bq button:last-of-type{background:var(--lime)}.bx input{width:60px;text-align:center;border:0;padding:4px;font-weight:700}.bonrow{flex-wrap:wrap;gap:8px}.bonrow .bot{flex-basis:100%;padding-inline-start:2px}
+
+footer{text-align:center;font-size:12px;color:#eae4d6;padding:0 0 18px}
+.lg{display:grid;gap:0 24px}
+.qt{flex:1;min-width:200px;background:none;border:0;text-align:start;font:900 15px "Archivo Black","Noto Sans Arabic",sans-serif;color:var(--ink);cursor:pointer;padding:4px 0}
+.qt .lb{font:500 13px "Archivo",sans-serif}
+.abar.bk{border:3px solid #193129}
+#alertbar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 12px);width:min(560px,calc(100% - 24px));z-index:50}
+#alertbar .abar{margin:0;box-shadow:0 10px 32px rgba(0,0,0,.4)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:60;max-width:min(560px,calc(100% - 24px));padding:10px 18px;border-radius:18px;background:#fff;border:3px solid var(--olive);color:#000;font-weight:600;box-shadow:0 10px 32px rgba(0,0,0,.4);display:none}#toast.t-err{border-color:var(--bad)}#toast.t-busy{border-color:var(--lime)}
+</style><script>
+window.addEventListener('error',function(e){var b=document.getElementById('app');if(b&&!b.getAttribute('data-ok')){b.innerHTML='<section style="padding:16px"><b>The page hit an error:</b><br>'+String(e.message).replace(/</g,'&lt;')+' (line '+e.lineno+')<br><br>Please send this message to the developer.</section>'}});
+try{new Function('a','return a??1;')}catch(e){document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('app');if(b)b.innerHTML='<section style="padding:16px">This browser is too old for the app. Please update iOS / Safari, or open the link in Chrome.</section>'})}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+</head><body>
+<header><h1>Workshop Tracker</h1><select id="cls" aria-label="Class"></select><input id="newcls" data-enter="1" placeholder="New class name, then Enter" hidden style="width:210px"><span class="lb">AUTOMOTIVE ELECTRICAL · TRAINING RECORD</span><span id="save" class="lb"></span><button class="tb" id="bkBtn" onclick="bak()" title="Download a backup file">⬇ Backup</button><button class="tb" id="undoAll" disabled title="Undo the last change (Ctrl+Z)">↶ Undo</button><button class="tb" id="lang">عربي</button><nav id="nav"></nav></header>
+<div id="alertbar"></div>
+<div id="bkbar"></div>
+<div id="synbar"></div>
+<div id="hero"></div>
+<main id="app"></main>
+<footer>Made by mostafa saeed</footer>
+<script>
+const STANDALONE=true;
+const KEY='wt_v1';
+const DEF={students:[],sessions:[],att:{},assess:[],events:[],audit:[],skills:[],skillAssess:[],plans:[],skillNotes:{},behavior:{},bonusB:{},bonusQ:{},bonusNote:{},alertSt:{},classes:[],curClass:null,cur:null,
+ set:{hi:80,mid:60,drop:15,low:50,minN:3,bonus:1,pen:-1,absN:2,lowEng:-3,lang:'en',liveCols:'auto',autoXls:true,behMax:10,bonusTo:'behavior'}};
+let D,saveOK=true,rbT=null;
+try{D=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'));D.set=Object.assign({},DEF.set,D.set)}catch(e){D=JSON.parse(JSON.stringify(DEF));saveOK=false}
+let FH=null,fhTimer=null;
+let SY={st:'local',dev:Math.random().toString(36).slice(2),chunks:null,ts:0,timer:null,busy:false,dirty:false,first:0,col:null,uid:null,conflict:null,unsub:null};
+let undoStack=[],lastSnap=null,lastPush=0;
+function save(){const j=JSON.stringify(D);if(lastSnap!==null&&j!==lastSnap){if(Date.now()-lastPush>800){undoStack.push(lastSnap);lastPush=Date.now();if(undoStack.length>30)undoStack.shift();let tot=undoStack.reduce((a,x)=>a+x.length,0);while(tot>12e6&&undoStack.length>1)tot-=undoStack.shift().length}}lastSnap=j;try{localStorage.setItem(KEY,j);saveOK=true}catch(e){saveOK=false}
+ const s=document.getElementById('save');stTxt();s.style.color=saveOK?'':'#b3261e';clearTimeout(rbT);rbT=setTimeout(()=>{try{renderBar()}catch(e){}},250);const u=document.getElementById('undoAll');if(u)u.disabled=!undoStack.length;syncSoon();fhSoon();idbSoon()}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const dt=d=>d?'\u2066'+d+'\u2069':'';// keep YYYY-MM-DD in order even next to Arabic text (RTL page)
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AR={Dashboard:'لوحة المعلومات',Students:'الطلاب',Attendance:'الحضور',Quiz:'الكويزات','Live':'المتابعة المباشرة','Practical Skills':'المهارات العملية',Alerts:'التنبيهات',Settings:'الإعدادات',Behavior:'السلوك',Bonus:'البونص'};
+const t=k=>D.set.lang==='ar'&&AR[k]||k;
+// ---- Arabic mode: translates the whole interface. Common English names (Excel, PDF, PNG, CSV, JSON, Chrome, Edge, Safari, claude.ai, Ctrl+Z, Workshop Tracker) stay in English ----
+const TRD={"+ Add class": "+ إضافة فصل", "AUTOMOTIVE ELECTRICAL · TRAINING RECORD": "كهرباء السيارات · سجل التدريب", "SAVED ON THIS DEVICE ONLY": "محفوظ على هذا الجهاز فقط", "SAVED ON DEVICE · NO SYNC ACCESS": "محفوظ على الجهاز · لا توجد صلاحية مزامنة", "SAVED ON DEVICE · SYNC ERROR (retrying)": "محفوظ على الجهاز · خطأ في المزامنة (جارٍ إعادة المحاولة)", "SAVED · SYNCED ☁": "محفوظ · تمت المزامنة ☁", "⚠ SAVE FAILED — NOT STORED": "⚠ فشل الحفظ — لم يتم التخزين", "⬇ Backup": "⬇ نسخة احتياطية", "↶ Undo": "↶ تراجع", "← Back": "← رجوع", "Made by mostafa saeed": "تطوير: مصطفى سعيد", "Class": "الفصل", "Class name": "اسم الفصل", "New class name, then Enter": "اسم الفصل الجديد ثم Enter", "Download a backup file": "تحميل ملف نسخة احتياطية", "Undo the last change (Ctrl+Z)": "التراجع عن آخر تغيير (Ctrl+Z)", "Scope": "النطاق", "View all": "عرض الكل", "Dismiss": "إخفاء", "Download backup": "تحميل نسخة احتياطية", "Later": "لاحقًا", "No backup yet. Your data lives only in this browser, so download a backup file.": "لا توجد نسخة احتياطية بعد. بياناتك محفوظة في هذا المتصفح فقط، لذلك حمّل ملف نسخة احتياطية.", "students": "طالب", "Students": "الطلاب", "Class report": "تقرير الفصل", "Export Excel": "تصدير Excel", "Dashboard PDF": "لوحة المعلومات PDF", "Dashboard PNG": "لوحة المعلومات PNG", "Opens as a file — print it or save as PDF": "يُفتح كملف — اطبعه أو احفظه بصيغة PDF", "ACTIVE STUDENTS": "الطلاب النشطون", "CLASS AVERAGE": "متوسط الفصل", "ATTENDANCE": "الحضور", "Attendance": "الحضور", "OPEN ALERTS": "تنبيهات مفتوحة", "Performance levels": "مستويات الأداء", "High": "مرتفع", "Medium": "متوسط", "Low": "منخفض", "High:": "مرتفع:", "Medium:": "متوسط:", "Low:": "منخفض:", "Quiz average over time (%)": "متوسط الكويزات عبر الوقت (%)", "Attendance per session (%)": "الحضور لكل حصة (%)", "LIVE POINTS": "نقاط المتابعة", "(separate from quiz scores)": "(منفصلة عن درجات الكويزات)", "(kept separate from quiz scores)": "(منفصلة عن درجات الكويزات)", "All sessions": "كل الحصص", "TOP STUDENT": "الطالب المتميز", "CLASS NET POINTS": "صافي نقاط الفصل", "INTERACTING": "المشاركون", "NO INTERACTION": "بدون مشاركة", "Top 10": "أفضل 10", "Class points per session": "نقاط الفصل لكل حصة", "Full ranking": "الترتيب الكامل", "NAME": "الاسم", "Name": "الاسم", "BONUS": "المكافآت", "PENALTY": "الخصومات", "NET": "الصافي", "TOP 5 — QUIZ AVERAGE": "أفضل 5 — متوسط الكويزات", "BOTTOM 5 — QUIZ AVERAGE": "أقل 5 — متوسط الكويزات", "ALL STUDENTS — click a name for the full record": "كل الطلاب — اضغط على الاسم لعرض السجل الكامل", "AVG": "المتوسط", "Avg": "المتوسط", "LEVEL": "المستوى", "Level": "المستوى", "TREND": "الاتجاه", "Trend": "الاتجاه", "ATT.": "الحضور", "Declining": "في تراجع", "Improving": "في تحسن", "Stable": "مستقر", "Insufficient Data": "بيانات غير كافية", "ADD STUDENT — type a name, press Enter": "إضافة طالب — اكتب الاسم ثم اضغط Enter", "Add": "إضافة", "SMART IMPORT (Excel / CSV: names, attendance, quiz grades)": "الاستيراد الذكي (Excel / CSV: الأسماء والحضور ودرجات الكويزات)", "Export CSV": "تصدير CSV", "Delete all students": "حذف كل الطلاب", "Sort: name": "ترتيب: الاسم", "Sort: quiz average": "ترتيب: متوسط الكويزات", "Sort: attendance": "ترتيب: الحضور", "Delete": "حذف", "Student name": "اسم الطالب", "Search": "بحث", "Sort": "ترتيب", "No students yet.": "لا يوجد طلاب بعد.", "No students.": "لا يوجد طلاب.", "Add students first.": "أضف الطلاب أولًا.", "STUDENT RECORD": "سجل الطالب", "Report": "تقرير", "Student data (Excel)": "بيانات الطالب (Excel)", "Dashboard (PDF)": "لوحة المعلومات (PDF)", "Dashboard (PNG)": "لوحة المعلومات (PNG)", "QUIZ AVERAGE": "متوسط الكويزات", "Quiz average": "متوسط الكويزات", "NET POINTS": "صافي النقاط", "RANK IN CLASS": "الترتيب في الفصل", "NOTES": "ملاحظات", "Notes": "ملاحظات", "QUIZ SCORES": "درجات الكويزات", "QUIZ": "الكويز", "Quiz": "الكويز", "Quizzes": "الكويزات", "DATE": "التاريخ", "Date": "التاريخ", "SCORE": "الدرجة", "Score": "الدرجة", "LIVE POINTS BY SESSION": "نقاط المتابعة لكل حصة", "PRACTICAL SKILLS (1–10)": "المهارات العملية (من 10)", "ALERTS": "التنبيهات", "Alerts": "التنبيهات", "DEVELOPMENT PLANS — only when needed": "خطط التطوير — عند الحاجة فقط", "Development plans": "خطط التطوير", "No plan for this student.": "لا توجد خطة لهذا الطالب.", "Add plan": "إضافة خطة", "Plan title": "عنوان الخطة", "Problem": "المشكلة", "Measurable target": "هدف قابل للقياس", "Progress note": "ملاحظة التقدم", "Active": "جارية", "Completed": "مكتملة", "Closed": "مغلقة", "Ended": "منتهية", "Late": "متأخر", "Excused": "بعذر", "Not Recorded": "غير مسجل", "Not recorded": "غير مسجل", "No grades": "لا توجد درجات", "No grades.": "لا توجد درجات.", "None": "لا يوجد", "NEW SESSION": "حصة جديدة", "New session": "حصة جديدة", "Create a session to take attendance.": "أنشئ حصة لتسجيل الحضور.", "Mark everyone present": "تسجيل الكل حاضر", "Delete day": "حذف اليوم", "Delete all days": "حذف كل الأيام", "Delete all sessions": "حذف كل الحصص", "Absent": "غائب", "Present": "حاضر", "Other days": "أيام أخرى", "Topic (optional)": "الموضوع (اختياري)", "Month": "الشهر", "No other days this month.": "لا توجد أيام أخرى هذا الشهر.", "No sessions yet.": "لا توجد حصص بعد.", "ATTENDANCE PER DAY": "الحضور لكل يوم", "Attendance day": "يوم حضور", "NEW QUIZ": "كويز جديد", "Delete all quizzes": "حذف كل الكويزات", "Create": "إنشاء", "End": "إنهاء", "Edit": "تعديل", "Reopen": "إعادة فتح", "Title": "العنوان", "Max score": "الدرجة العظمى", "No quizzes yet. Blank scores stay missing, never zero.": "لا توجد كويزات بعد. الدرجات الفارغة تبقى بلا قيمة ولا تُحسب صفرًا.", "Undo last": "تراجع عن الأخير", "Columns: auto": "الأعمدة: تلقائي", "End session": "إنهاء الحصة", "Start session": "بدء الحصة", "Columns": "الأعمدة", "Everyone has at least one event.": "لكل طالب حدث واحد على الأقل.", "EVENT LOG": "سجل الأحداث", "No events yet.": "لا توجد أحداث بعد.", "No interaction yet": "لا توجد مشاركة بعد", "ADD SKILL": "إضافة مهارة", "Delete all skills": "حذف كل المهارات", "rating 1–10 · blank = not assessed": "التقييم من 1 إلى 10 · فارغ = لم يُقيَّم", "Archive": "أرشفة", "Other skills": "مهارات أخرى", "Skill name": "اسم المهارة", "Rating": "التقييم", "Note": "ملاحظة", "No other skills.": "لا توجد مهارات أخرى.", "No skills defined.": "لا توجد مهارات معرّفة.", "No skills yet. Add one above.": "لا توجد مهارات بعد. أضف واحدة بالأعلى.", "Acknowledge": "تم الاطلاع", "Acknowledged": "تم الاطلاع عليه", "Resolve": "تم الحل", "Resolved": "تم الحل", "RESOLVED": "تم الحل", "Positive": "إيجابي", "No problems right now.": "لا توجد مشاكل حاليًا.", "Contact the student about attendance.": "تواصل مع الطالب بخصوص الحضور.", "Review the quiz with the student; consider a development plan.": "راجع الكويز مع الطالب، وفكّر في خطة تطوير.", "Offer targeted practice or revision.": "قدّم تدريبًا أو مراجعة موجهة.", "Monitor and discuss.": "تابع الحالة وناقشها.", "Acknowledge the progress.": "أشِد بالتقدم الذي أحرزه.", "Check in privately. Events reflect instructor observations only.": "تحدث معه على انفراد. الأحداث تعكس ملاحظات المدرّب فقط.", "ACCOUNT & SYNC": "الحساب والمزامنة", "CLASSES": "الفصول", "RULES": "القواعد", "High level from (%)": "بداية المستوى المرتفع (%)", "Medium level from (%)": "بداية المستوى المتوسط (%)", "also the pass mark": "وهي أيضًا درجة النجاح", "Sudden-drop (points)": "الانخفاض المفاجئ (نقاط)", "latest vs previous 3": "آخر كويز مقابل آخر 3 سابقة", "Persistent-low (%)": "الضعف المستمر (%)", "average below this": "المتوسط أقل من هذا", "Minimum quizzes": "الحد الأدنى للكويزات", "for trend and alerts": "للاتجاه والتنبيهات", "Bonus value": "قيمة المكافأة", "per +": "لكل +", "Penalty value": "قيمة الخصم", "per −, negative": "لكل −، بالسالب", "Consecutive absences": "الغياب المتتالي", "alert at": "تنبيه عند", "Low engagement net avg": "متوسط صافي ضعف المشاركة", "last 3 sessions": "آخر 3 حصص", "DATA PROTECTION": "حماية البيانات", "Storage status:": "حالة التخزين:", "Status:": "الحالة:", "Not guaranteed by the browser": "غير مضمونة من المتصفح", "Protected (the browser promised not to clear it)": "محمية (تعهّد المتصفح بعدم مسحها)", "Request protection": "طلب الحماية", "Export to Excel now": "تصدير Excel الآن", "Update my existing file": "تحديث ملفي الحالي", "Link a file (auto-save, Chrome/Edge on a laptop)": "ربط ملف (حفظ تلقائي، Chrome/Edge على اللابتوب)", "Also download the Excel file automatically when I end a session or a quiz": "حمّل ملف Excel تلقائيًا أيضًا عند إنهاء حصة أو كويز", "BACKUP": "النسخ الاحتياطي", "Download backup (JSON)": "تحميل نسخة احتياطية (JSON)", "RESTORE": "استعادة", "Load demo data": "تحميل بيانات تجريبية", "Remove demo data": "حذف البيانات التجريبية", "Data lives in this browser only. Download backups regularly.": "البيانات محفوظة في هذا المتصفح فقط. حمّل نسخًا احتياطية بانتظام.", "Click again to confirm": "اضغط مرة أخرى للتأكيد", "Cancel": "إلغاء", "OK": "موافق", "Open": "مفتوح", "Contributor": "مساهم", "Add an engineer:": "إضافة مهندس:", "Engineer code:": "كود المهندس:", "Sync now": "مزامنة الآن", "Replace cloud with this device": "استبدال بيانات السحابة ببيانات هذا الجهاز", "Use cloud data": "استخدام بيانات السحابة", "Your account already has cloud data. Which one do you want to keep?": "حسابك يحتوي على بيانات في السحابة بالفعل. أي نسخة تريد الاحتفاظ بها؟", "The page hit an error:": "حدث خطأ في الصفحة:", "Please send this message to the developer.": "يرجى إرسال هذه الرسالة إلى المطوّر.", "This browser is too old for the app. Please update iOS / Safari, or open the link in Chrome.": "هذا المتصفح قديم ولا يدعم البرنامج. حدّث iOS / Safari أو افتح الرابط في Chrome.", "Worksheets to import:": "أوراق العمل المراد استيرادها:", "Import:": "استيراد:", "Import": "استيراد", "Names + attendance + quiz grades + IDs": "الأسماء + الحضور + درجات الكويزات + الأرقام", "Names + attendance only": "الأسماء + الحضور فقط", "Add new students and records (keep existing values)": "إضافة الطلاب والسجلات الجديدة (مع الإبقاء على القيم الحالية)", "Update matching records (overwrite existing values)": "تحديث السجلات المتطابقة (استبدال القيم الحالية)", "Import only new records (leave existing days/quizzes untouched)": "استيراد السجلات الجديدة فقط (دون المساس بالأيام/الكويزات الموجودة)", "Skip duplicates (leave students already in this class untouched)": "تخطي المكرر (دون المساس بالطلاب الموجودين في هذا الفصل)", "Student ID": "رقم الطالب", "Class / group": "الفصل / المجموعة", "Ignore": "تجاهل", "SHEET": "الورقة", "COLUMN": "العمود", "WHAT IS IT?": "نوع العمود", "CONFIDENCE": "درجة الثقة", "DETAILS": "التفاصيل", "VALUES": "القيم", "high": "عالية", "check": "راجع", "uncertain": "غير مؤكدة", "set by you": "حددته أنت", "Looks right": "سليم", "Remove": "إزالة", "students found ·": "طالب تم العثور عليهم ·", "new": "جديد", "attendance columns ·": "عمود حضور ·", "quiz columns": "عمود كويز", "Check what each column is. 1 = Present, 0 = Absent, blank = Not Recorded. A quiz score of 0 is never an absence.": "راجع نوع كل عمود. 1 = حاضر، 0 = غائب، فارغ = غير مسجل. درجة الكويز 0 لا تُعتبر غيابًا أبدًا.", "No attendance or quiz columns were found for this selection. Only the names will be added.": "لم يتم العثور على أعمدة حضور أو كويزات في هذا الاختيار. ستُضاف الأسماء فقط.", "NAMES TO CHECK": "أسماء تحتاج مراجعة", "These names look like existing students but are not identical. Nothing is merged unless you say so.": "هذه الأسماء تشبه طلابًا موجودين لكنها ليست مطابقة تمامًا. لن يتم الدمج إلا إذا طلبت ذلك.", "Skip this student": "تخطي هذا الطالب", "Create a new student": "إنشاء طالب جديد", "SAMPLE OF THE CLEANED DATA": "عينة من البيانات بعد التنظيف", "THINGS TO KNOW": "أمور يجب معرفتها", "PROPOSED CHANGES": "التغييرات المقترحة", "no date found, today will be used": "لم يتم العثور على تاريخ، سيُستخدم تاريخ اليوم", "maximum score not found: enter it": "لم يتم العثور على الدرجة العظمى: أدخلها", "Quiz title": "عنوان الكويز", "What to import": "ما المراد استيراده", "Import strategy": "طريقة الاستيراد", "Type": "النوع", "Columns: 1": "الأعمدة: 1", "Select at least one worksheet that contains students.": "اختر ورقة عمل واحدة على الأقل تحتوي على طلاب.", "header is a date": "العنوان تاريخ", "Present/Absent values": "قيم حاضر/غائب", "header says ID/code": "العنوان يشير إلى رقم/كود", "header says class/group": "العنوان يشير إلى فصل/مجموعة", "long-format table": "جدول بصيغة طويلة", "looks like a total, rank, phone or other number": "يبدو كمجموع أو ترتيب أو هاتف أو رقم آخر", "only 0 and 1, no header": "قيم 0 و1 فقط بدون عنوان", "only 0/1, but the header looks like a quiz": "قيم 0/1 فقط لكن العنوان يبدو كويزًا", "row numbers (1, 2, 3 …)": "أرقام صفوف (1، 2، 3 …)", "numeric scores (values other than 0/1)": "درجات رقمية (قيم غير 0/1)", "numeric scores, header looks like a quiz": "درجات رقمية والعنوان يبدو كويزًا", "several students share this name": "عدة طلاب بنفس الاسم", "similar to an existing name": "مشابه لاسم موجود", "Preparing": "جارٍ التحضير", "… this can take a few seconds": "… قد يستغرق هذا بضع ثوانٍ", "Add fictional DEMO students?": "إضافة طلاب تجريبيين وهميين؟", "Class name already exists": "اسم الفصل موجود بالفعل", "Could not read this file": "تعذّرت قراءة هذا الملف", "Export was cancelled": "تم إلغاء التصدير", "Invalid backup file": "ملف النسخة الاحتياطية غير صالح", "No student names could be found in this file.": "لم يتم العثور على أسماء طلاب في هذا الملف.", "Plan title is required": "عنوان الخطة مطلوب", "Rating must be 1 to 10": "يجب أن يكون التقييم من 1 إلى 10", "Student not found": "لم يتم العثور على الطالب", "This name already exists": "هذا الاسم موجود بالفعل", "Title and a positive max score are required": "العنوان ودرجة عظمى أكبر من صفر مطلوبان", "The Excel library did not load. Check your connection and try again.": "لم يتم تحميل مكتبة Excel. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.", "The Excel reader could not load. Check your connection, or save the sheet as CSV.": "تعذّر تحميل قارئ Excel. تأكد من الاتصال بالإنترنت أو احفظ الشيت بصيغة CSV.", "This browser does not allow linking a file here. It works on Chrome or Edge on a laptop. Use \"Export to Excel\" instead.": "هذا المتصفح لا يسمح بربط ملف هنا. الميزة تعمل على Chrome أو Edge في اللابتوب. استخدم \"تصدير Excel\" بدلًا منها.", "Linked. The file updates automatically a few seconds after every change while this page is open. After reopening the page, link it again.": "تم الربط. يتحدّث الملف تلقائيًا بعد ثوانٍ من كل تغيير طالما الصفحة مفتوحة. بعد إعادة فتح الصفحة اربطه مرة أخرى.", "Print / Save as PDF": "طباعة / حفظ بصيغة PDF", "Last backup": "آخر نسخة احتياطية", "No data.": "لا توجد بيانات.", "No data yet.": "لا توجد بيانات بعد.", "No graded students yet.": "لا يوجد طلاب تم تصحيحهم بعد.", "No improvements detected yet.": "لم يتم رصد تحسّن بعد.", "Everyone": "الجميع", "No open alerts": "لا توجد تنبيهات مفتوحة", "No plans yet": "لا توجد خطط بعد", "No quizzes yet": "لا توجد كويزات بعد", "Dashboard": "لوحة المعلومات", "Settings": "الإعدادات", "Live": "المتابعة المباشرة", "Practical Skills": "المهارات العملية", "This version works without any account. Your data is stored on this device only. To move it to another phone or laptop, use ⬇ Backup here, then Restore on the other device.": "يعمل هذا الإصدار بدون أي حساب. بياناتك محفوظة على هذا الجهاز فقط. لنقلها إلى هاتف أو لابتوب آخر استخدم ⬇ نسخة احتياطية هنا، ثم استعدها على الجهاز الآخر.", "Your data is saved twice on this device, in two separate browser stores. Safari on iPhone can still erase a website's data after about a week without opening it. To avoid that, add this page to the Home Screen and open it from there, or open the app at least once a week. Chrome and Edge keep the data unless the device is very low on space.": "بياناتك محفوظة مرتين على هذا الجهاز في مخزنين منفصلين بالمتصفح. ومع ذلك قد يمسح Safari على iPhone بيانات أي موقع بعد نحو أسبوع من عدم فتحه. لتجنب ذلك أضف هذه الصفحة إلى الشاشة الرئيسية وافتحها من هناك، أو افتح البرنامج مرة واحدة على الأقل أسبوعيًا. يحتفظ Chrome وEdge بالبيانات ما لم تكن مساحة الجهاز منخفضة جدًا.", "The class file has two sheets: \"Class data\" (each student with attendance and quiz grades) and \"Dashboard\" (class totals). For one student, open the profile and press Export Excel. \"Update my existing file\" refreshes only these two sheets inside your own workbook and keeps any other sheets you added.": "ملف الفصل فيه شيتان: \"Class data\" (كل طالب مع الحضور ودرجات الكويزات) و\"Dashboard\" (إجماليات الفصل). لتصدير طالب واحد افتح ملفه واضغط تصدير Excel. زر \"تحديث ملفي الحالي\" يحدّث هذين الشيتين فقط داخل ملفك ويُبقي أي شيتات أخرى أضفتها.", "On iPhone, Safari can erase a website's data after about a week without opening it. To keep your data safe, add this page to your Home Screen (Share, then Add to Home Screen) and open it from there.": "على iPhone قد يمسح Safari بيانات أي موقع بعد نحو أسبوع من عدم فتحه. للحفاظ على بياناتك أضف هذه الصفحة إلى الشاشة الرئيسية (مشاركة ثم إضافة إلى الشاشة الرئيسية) وافتحها من هناك.", "You are not signed in to claude.ai, so your data is saved on this device only. Sign in with your account and reopen this link to use it on your phone and laptop.": "لم تسجّل الدخول إلى claude.ai، لذلك بياناتك محفوظة على هذا الجهاز فقط. سجّل الدخول بحسابك وأعد فتح هذا الرابط لاستخدامه على هاتفك وجهاز اللابتوب.", "Open this page signed in on any phone or laptop and you get the same data. Each engineer who opens it with their own account has a separate private workspace.": "افتح هذه الصفحة بعد تسجيل الدخول من أي هاتف أو لابتوب وستحصل على البيانات نفسها. كل مهندس يفتحها بحسابه الخاص له مساحة عمل خاصة ومنفصلة.", "Sync is off. Open this page while signed in to claude.ai to keep your data on every device. Right now it is stored on this device only.": "المزامنة متوقفة. افتح هذه الصفحة وأنت مسجّل الدخول إلى claude.ai للاحتفاظ ببياناتك على كل أجهزتك. حاليًا بياناتك محفوظة على هذا الجهاز فقط.", "Sync is unavailable for your access level, so data stays on this device. Ask the owner to share this page with you as a Contributor.": "المزامنة غير متاحة لمستوى صلاحيتك، لذلك تبقى البيانات على هذا الجهاز. اطلب من المالك مشاركة هذه الصفحة معك بصفة مساهم.", "+ ADD CLASS": "+ إضافة فصل", "SAVED ON DEVICE · SYNC ERROR (RETRYING)": "محفوظ على الجهاز · خطأ في المزامنة (جارٍ إعادة المحاولة)", "⬇ BACKUP": "⬇ نسخة احتياطية", "↶ UNDO": "↶ تراجع", "← BACK": "← رجوع", "MADE BY MOSTAFA SAEED": "تطوير: مصطفى سعيد", "CLASS": "الفصل", "CLASS NAME": "اسم الفصل", "NEW CLASS NAME, THEN ENTER": "اسم الفصل الجديد ثم Enter", "DOWNLOAD A BACKUP FILE": "تحميل ملف نسخة احتياطية", "UNDO THE LAST CHANGE (CTRL+Z)": "التراجع عن آخر تغيير (Ctrl+Z)", "SCOPE": "النطاق", "VIEW ALL": "عرض الكل", "DISMISS": "إخفاء", "DOWNLOAD BACKUP": "تحميل نسخة احتياطية", "LATER": "لاحقًا", "NO BACKUP YET. YOUR DATA LIVES ONLY IN THIS BROWSER, SO DOWNLOAD A BACKUP FILE.": "لا توجد نسخة احتياطية بعد. بياناتك محفوظة في هذا المتصفح فقط، لذلك حمّل ملف نسخة احتياطية.", "STUDENTS": "طالب", "CLASS REPORT": "تقرير الفصل", "EXPORT EXCEL": "تصدير Excel", "DASHBOARD PDF": "لوحة المعلومات PDF", "DASHBOARD PNG": "لوحة المعلومات PNG", "OPENS AS A FILE — PRINT IT OR SAVE AS PDF": "يُفتح كملف — اطبعه أو احفظه بصيغة PDF", "PERFORMANCE LEVELS": "مستويات الأداء", "HIGH": "مرتفع", "MEDIUM": "متوسط", "LOW": "منخفض", "HIGH:": "مرتفع:", "MEDIUM:": "متوسط:", "LOW:": "منخفض:", "QUIZ AVERAGE OVER TIME (%)": "متوسط الكويزات عبر الوقت (%)", "ATTENDANCE PER SESSION (%)": "الحضور لكل حصة (%)", "(SEPARATE FROM QUIZ SCORES)": "(منفصلة عن درجات الكويزات)", "(KEPT SEPARATE FROM QUIZ SCORES)": "(منفصلة عن درجات الكويزات)", "ALL SESSIONS": "كل الحصص", "TOP 10": "أفضل 10", "CLASS POINTS PER SESSION": "نقاط الفصل لكل حصة", "FULL RANKING": "الترتيب الكامل", "ALL STUDENTS — CLICK A NAME FOR THE FULL RECORD": "كل الطلاب — اضغط على الاسم لعرض السجل الكامل", "DECLINING": "في تراجع", "IMPROVING": "في تحسن", "STABLE": "مستقر", "INSUFFICIENT DATA": "بيانات غير كافية", "ADD STUDENT — TYPE A NAME, PRESS ENTER": "إضافة طالب — اكتب الاسم ثم اضغط Enter", "ADD": "إضافة", "SMART IMPORT (EXCEL / CSV: NAMES, ATTENDANCE, QUIZ GRADES)": "الاستيراد الذكي (Excel / CSV: الأسماء والحضور ودرجات الكويزات)", "EXPORT CSV": "تصدير CSV", "DELETE ALL STUDENTS": "حذف كل الطلاب", "SORT: NAME": "ترتيب: الاسم", "SORT: QUIZ AVERAGE": "ترتيب: متوسط الكويزات", "SORT: ATTENDANCE": "ترتيب: الحضور", "DELETE": "حذف", "STUDENT NAME": "اسم الطالب", "SEARCH": "بحث", "SORT": "ترتيب", "NO STUDENTS YET.": "لا يوجد طلاب بعد.", "NO STUDENTS.": "لا يوجد طلاب.", "ADD STUDENTS FIRST.": "أضف الطلاب أولًا.", "REPORT": "تقرير", "STUDENT DATA (EXCEL)": "بيانات الطالب (Excel)", "DASHBOARD (PDF)": "لوحة المعلومات (PDF)", "DASHBOARD (PNG)": "لوحة المعلومات (PNG)", "QUIZZES": "الكويزات", "DEVELOPMENT PLANS — ONLY WHEN NEEDED": "خطط التطوير — عند الحاجة فقط", "DEVELOPMENT PLANS": "خطط التطوير", "NO PLAN FOR THIS STUDENT.": "لا توجد خطة لهذا الطالب.", "ADD PLAN": "إضافة خطة", "PLAN TITLE": "عنوان الخطة", "PROBLEM": "المشكلة", "MEASURABLE TARGET": "هدف قابل للقياس", "PROGRESS NOTE": "ملاحظة التقدم", "ACTIVE": "جارية", "COMPLETED": "مكتملة", "CLOSED": "مغلقة", "ENDED": "منتهية", "LATE": "متأخر", "EXCUSED": "بعذر", "NOT RECORDED": "غير مسجل", "NO GRADES": "لا توجد درجات", "NO GRADES.": "لا توجد درجات.", "NONE": "لا يوجد", "CREATE A SESSION TO TAKE ATTENDANCE.": "أنشئ حصة لتسجيل الحضور.", "MARK EVERYONE PRESENT": "تسجيل الكل حاضر", "DELETE DAY": "حذف اليوم", "DELETE ALL DAYS": "حذف كل الأيام", "DELETE ALL SESSIONS": "حذف كل الحصص", "ABSENT": "غائب", "PRESENT": "حاضر", "OTHER DAYS": "أيام أخرى", "TOPIC (OPTIONAL)": "الموضوع (اختياري)", "MONTH": "الشهر", "NO OTHER DAYS THIS MONTH.": "لا توجد أيام أخرى هذا الشهر.", "NO SESSIONS YET.": "لا توجد حصص بعد.", "ATTENDANCE DAY": "يوم حضور", "DELETE ALL QUIZZES": "حذف كل الكويزات", "CREATE": "إنشاء", "END": "إنهاء", "EDIT": "تعديل", "REOPEN": "إعادة فتح", "TITLE": "العنوان", "MAX SCORE": "الدرجة العظمى", "NO QUIZZES YET. BLANK SCORES STAY MISSING, NEVER ZERO.": "لا توجد كويزات بعد. الدرجات الفارغة تبقى بلا قيمة ولا تُحسب صفرًا.", "UNDO LAST": "تراجع عن الأخير", "COLUMNS: AUTO": "الأعمدة: تلقائي", "END SESSION": "إنهاء الحصة", "START SESSION": "بدء الحصة", "COLUMNS": "الأعمدة", "EVERYONE HAS AT LEAST ONE EVENT.": "لكل طالب حدث واحد على الأقل.", "NO EVENTS YET.": "لا توجد أحداث بعد.", "NO INTERACTION YET": "لا توجد مشاركة بعد", "DELETE ALL SKILLS": "حذف كل المهارات", "RATING 1–10 · BLANK = NOT ASSESSED": "التقييم من 1 إلى 10 · فارغ = لم يُقيَّم", "ARCHIVE": "أرشفة", "OTHER SKILLS": "مهارات أخرى", "SKILL NAME": "اسم المهارة", "RATING": "التقييم", "NOTE": "ملاحظة", "NO OTHER SKILLS.": "لا توجد مهارات أخرى.", "NO SKILLS DEFINED.": "لا توجد مهارات معرّفة.", "NO SKILLS YET. ADD ONE ABOVE.": "لا توجد مهارات بعد. أضف واحدة بالأعلى.", "ACKNOWLEDGE": "تم الاطلاع", "ACKNOWLEDGED": "تم الاطلاع عليه", "RESOLVE": "تم الحل", "POSITIVE": "إيجابي", "NO PROBLEMS RIGHT NOW.": "لا توجد مشاكل حاليًا.", "CONTACT THE STUDENT ABOUT ATTENDANCE.": "تواصل مع الطالب بخصوص الحضور.", "REVIEW THE QUIZ WITH THE STUDENT; CONSIDER A DEVELOPMENT PLAN.": "راجع الكويز مع الطالب، وفكّر في خطة تطوير.", "OFFER TARGETED PRACTICE OR REVISION.": "قدّم تدريبًا أو مراجعة موجهة.", "MONITOR AND DISCUSS.": "تابع الحالة وناقشها.", "ACKNOWLEDGE THE PROGRESS.": "أشِد بالتقدم الذي أحرزه.", "CHECK IN PRIVATELY. EVENTS REFLECT INSTRUCTOR OBSERVATIONS ONLY.": "تحدث معه على انفراد. الأحداث تعكس ملاحظات المدرّب فقط.", "HIGH LEVEL FROM (%)": "بداية المستوى المرتفع (%)", "MEDIUM LEVEL FROM (%)": "بداية المستوى المتوسط (%)", "ALSO THE PASS MARK": "وهي أيضًا درجة النجاح", "SUDDEN-DROP (POINTS)": "الانخفاض المفاجئ (نقاط)", "LATEST VS PREVIOUS 3": "آخر كويز مقابل آخر 3 سابقة", "PERSISTENT-LOW (%)": "الضعف المستمر (%)", "AVERAGE BELOW THIS": "المتوسط أقل من هذا", "MINIMUM QUIZZES": "الحد الأدنى للكويزات", "FOR TREND AND ALERTS": "للاتجاه والتنبيهات", "BONUS VALUE": "قيمة المكافأة", "PER +": "لكل +", "PENALTY VALUE": "قيمة الخصم", "PER −, NEGATIVE": "لكل −، بالسالب", "CONSECUTIVE ABSENCES": "الغياب المتتالي", "ALERT AT": "تنبيه عند", "LOW ENGAGEMENT NET AVG": "متوسط صافي ضعف المشاركة", "LAST 3 SESSIONS": "آخر 3 حصص", "STORAGE STATUS:": "حالة التخزين:", "STATUS:": "الحالة:", "NOT GUARANTEED BY THE BROWSER": "غير مضمونة من المتصفح", "PROTECTED (THE BROWSER PROMISED NOT TO CLEAR IT)": "محمية (تعهّد المتصفح بعدم مسحها)", "REQUEST PROTECTION": "طلب الحماية", "EXPORT TO EXCEL NOW": "تصدير Excel الآن", "UPDATE MY EXISTING FILE": "تحديث ملفي الحالي", "LINK A FILE (AUTO-SAVE, CHROME/EDGE ON A LAPTOP)": "ربط ملف (حفظ تلقائي، Chrome/Edge على اللابتوب)", "ALSO DOWNLOAD THE EXCEL FILE AUTOMATICALLY WHEN I END A SESSION OR A QUIZ": "حمّل ملف Excel تلقائيًا أيضًا عند إنهاء حصة أو كويز", "DOWNLOAD BACKUP (JSON)": "تحميل نسخة احتياطية (JSON)", "LOAD DEMO DATA": "تحميل بيانات تجريبية", "REMOVE DEMO DATA": "حذف البيانات التجريبية", "DATA LIVES IN THIS BROWSER ONLY. DOWNLOAD BACKUPS REGULARLY.": "البيانات محفوظة في هذا المتصفح فقط. حمّل نسخًا احتياطية بانتظام.", "CLICK AGAIN TO CONFIRM": "اضغط مرة أخرى للتأكيد", "CANCEL": "إلغاء", "OPEN": "مفتوح", "CONTRIBUTOR": "مساهم", "ADD AN ENGINEER:": "إضافة مهندس:", "ENGINEER CODE:": "كود المهندس:", "SYNC NOW": "مزامنة الآن", "REPLACE CLOUD WITH THIS DEVICE": "استبدال بيانات السحابة ببيانات هذا الجهاز", "USE CLOUD DATA": "استخدام بيانات السحابة", "YOUR ACCOUNT ALREADY HAS CLOUD DATA. WHICH ONE DO YOU WANT TO KEEP?": "حسابك يحتوي على بيانات في السحابة بالفعل. أي نسخة تريد الاحتفاظ بها؟", "THE PAGE HIT AN ERROR:": "حدث خطأ في الصفحة:", "PLEASE SEND THIS MESSAGE TO THE DEVELOPER.": "يرجى إرسال هذه الرسالة إلى المطوّر.", "THIS BROWSER IS TOO OLD FOR THE APP. PLEASE UPDATE IOS / SAFARI, OR OPEN THE LINK IN CHROME.": "هذا المتصفح قديم ولا يدعم البرنامج. حدّث iOS / Safari أو افتح الرابط في Chrome.", "WORKSHEETS TO IMPORT:": "أوراق العمل المراد استيرادها:", "IMPORT:": "استيراد:", "IMPORT": "استيراد", "NAMES + ATTENDANCE + QUIZ GRADES + IDS": "الأسماء + الحضور + درجات الكويزات + الأرقام", "NAMES + ATTENDANCE ONLY": "الأسماء + الحضور فقط", "ADD NEW STUDENTS AND RECORDS (KEEP EXISTING VALUES)": "إضافة الطلاب والسجلات الجديدة (مع الإبقاء على القيم الحالية)", "UPDATE MATCHING RECORDS (OVERWRITE EXISTING VALUES)": "تحديث السجلات المتطابقة (استبدال القيم الحالية)", "IMPORT ONLY NEW RECORDS (LEAVE EXISTING DAYS/QUIZZES UNTOUCHED)": "استيراد السجلات الجديدة فقط (دون المساس بالأيام/الكويزات الموجودة)", "SKIP DUPLICATES (LEAVE STUDENTS ALREADY IN THIS CLASS UNTOUCHED)": "تخطي المكرر (دون المساس بالطلاب الموجودين في هذا الفصل)", "STUDENT ID": "رقم الطالب", "CLASS / GROUP": "الفصل / المجموعة", "IGNORE": "تجاهل", "CHECK": "راجع", "UNCERTAIN": "غير مؤكدة", "SET BY YOU": "حددته أنت", "LOOKS RIGHT": "سليم", "REMOVE": "إزالة", "STUDENTS FOUND ·": "طالب تم العثور عليهم ·", "NEW": "جديد", "ATTENDANCE COLUMNS ·": "عمود حضور ·", "QUIZ COLUMNS": "عمود كويز", "CHECK WHAT EACH COLUMN IS. 1 = PRESENT, 0 = ABSENT, BLANK = NOT RECORDED. A QUIZ SCORE OF 0 IS NEVER AN ABSENCE.": "راجع نوع كل عمود. 1 = حاضر، 0 = غائب، فارغ = غير مسجل. درجة الكويز 0 لا تُعتبر غيابًا أبدًا.", "NO ATTENDANCE OR QUIZ COLUMNS WERE FOUND FOR THIS SELECTION. ONLY THE NAMES WILL BE ADDED.": "لم يتم العثور على أعمدة حضور أو كويزات في هذا الاختيار. ستُضاف الأسماء فقط.", "THESE NAMES LOOK LIKE EXISTING STUDENTS BUT ARE NOT IDENTICAL. NOTHING IS MERGED UNLESS YOU SAY SO.": "هذه الأسماء تشبه طلابًا موجودين لكنها ليست مطابقة تمامًا. لن يتم الدمج إلا إذا طلبت ذلك.", "SKIP THIS STUDENT": "تخطي هذا الطالب", "CREATE A NEW STUDENT": "إنشاء طالب جديد", "NO DATE FOUND, TODAY WILL BE USED": "لم يتم العثور على تاريخ، سيُستخدم تاريخ اليوم", "MAXIMUM SCORE NOT FOUND: ENTER IT": "لم يتم العثور على الدرجة العظمى: أدخلها", "QUIZ TITLE": "عنوان الكويز", "WHAT TO IMPORT": "ما المراد استيراده", "IMPORT STRATEGY": "طريقة الاستيراد", "TYPE": "النوع", "COLUMNS: 1": "الأعمدة: 1", "SELECT AT LEAST ONE WORKSHEET THAT CONTAINS STUDENTS.": "اختر ورقة عمل واحدة على الأقل تحتوي على طلاب.", "HEADER IS A DATE": "العنوان تاريخ", "PRESENT/ABSENT VALUES": "قيم حاضر/غائب", "HEADER SAYS ID/CODE": "العنوان يشير إلى رقم/كود", "HEADER SAYS CLASS/GROUP": "العنوان يشير إلى فصل/مجموعة", "LONG-FORMAT TABLE": "جدول بصيغة طويلة", "LOOKS LIKE A TOTAL, RANK, PHONE OR OTHER NUMBER": "يبدو كمجموع أو ترتيب أو هاتف أو رقم آخر", "ONLY 0 AND 1, NO HEADER": "قيم 0 و1 فقط بدون عنوان", "ONLY 0/1, BUT THE HEADER LOOKS LIKE A QUIZ": "قيم 0/1 فقط لكن العنوان يبدو كويزًا", "ROW NUMBERS (1, 2, 3 …)": "أرقام صفوف (1، 2، 3 …)", "NUMERIC SCORES (VALUES OTHER THAN 0/1)": "درجات رقمية (قيم غير 0/1)", "NUMERIC SCORES, HEADER LOOKS LIKE A QUIZ": "درجات رقمية والعنوان يبدو كويزًا", "SEVERAL STUDENTS SHARE THIS NAME": "عدة طلاب بنفس الاسم", "SIMILAR TO AN EXISTING NAME": "مشابه لاسم موجود", "PREPARING": "جارٍ التحضير", "… THIS CAN TAKE A FEW SECONDS": "… قد يستغرق هذا بضع ثوانٍ", "ADD FICTIONAL DEMO STUDENTS?": "إضافة طلاب تجريبيين وهميين؟", "CLASS NAME ALREADY EXISTS": "اسم الفصل موجود بالفعل", "COULD NOT READ THIS FILE": "تعذّرت قراءة هذا الملف", "EXPORT WAS CANCELLED": "تم إلغاء التصدير", "INVALID BACKUP FILE": "ملف النسخة الاحتياطية غير صالح", "NO STUDENT NAMES COULD BE FOUND IN THIS FILE.": "لم يتم العثور على أسماء طلاب في هذا الملف.", "PLAN TITLE IS REQUIRED": "عنوان الخطة مطلوب", "RATING MUST BE 1 TO 10": "يجب أن يكون التقييم من 1 إلى 10", "STUDENT NOT FOUND": "لم يتم العثور على الطالب", "THIS NAME ALREADY EXISTS": "هذا الاسم موجود بالفعل", "TITLE AND A POSITIVE MAX SCORE ARE REQUIRED": "العنوان ودرجة عظمى أكبر من صفر مطلوبان", "THE EXCEL LIBRARY DID NOT LOAD. CHECK YOUR CONNECTION AND TRY AGAIN.": "لم يتم تحميل مكتبة Excel. تأكد من الاتصال بالإنترنت وحاول مرة أخرى.", "THE EXCEL READER COULD NOT LOAD. CHECK YOUR CONNECTION, OR SAVE THE SHEET AS CSV.": "تعذّر تحميل قارئ Excel. تأكد من الاتصال بالإنترنت أو احفظ الشيت بصيغة CSV.", "THIS BROWSER DOES NOT ALLOW LINKING A FILE HERE. IT WORKS ON CHROME OR EDGE ON A LAPTOP. USE \"EXPORT TO EXCEL\" INSTEAD.": "هذا المتصفح لا يسمح بربط ملف هنا. الميزة تعمل على Chrome أو Edge في اللابتوب. استخدم \"تصدير Excel\" بدلًا منها.", "LINKED. THE FILE UPDATES AUTOMATICALLY A FEW SECONDS AFTER EVERY CHANGE WHILE THIS PAGE IS OPEN. AFTER REOPENING THE PAGE, LINK IT AGAIN.": "تم الربط. يتحدّث الملف تلقائيًا بعد ثوانٍ من كل تغيير طالما الصفحة مفتوحة. بعد إعادة فتح الصفحة اربطه مرة أخرى.", "PRINT / SAVE AS PDF": "طباعة / حفظ بصيغة PDF", "LAST BACKUP": "آخر نسخة احتياطية", "NO DATA.": "لا توجد بيانات.", "NO DATA YET.": "لا توجد بيانات بعد.", "NO GRADED STUDENTS YET.": "لا يوجد طلاب تم تصحيحهم بعد.", "NO IMPROVEMENTS DETECTED YET.": "لم يتم رصد تحسّن بعد.", "EVERYONE": "الجميع", "NO OPEN ALERTS": "لا توجد تنبيهات مفتوحة", "NO PLANS YET": "لا توجد خطط بعد", "NO QUIZZES YET": "لا توجد كويزات بعد", "DASHBOARD": "لوحة المعلومات", "SETTINGS": "الإعدادات", "LIVE": "المتابعة المباشرة", "PRACTICAL SKILLS": "المهارات العملية", "THIS VERSION WORKS WITHOUT ANY ACCOUNT. YOUR DATA IS STORED ON THIS DEVICE ONLY. TO MOVE IT TO ANOTHER PHONE OR LAPTOP, USE ⬇ BACKUP HERE, THEN RESTORE ON THE OTHER DEVICE.": "يعمل هذا الإصدار بدون أي حساب. بياناتك محفوظة على هذا الجهاز فقط. لنقلها إلى هاتف أو لابتوب آخر استخدم ⬇ نسخة احتياطية هنا، ثم استعدها على الجهاز الآخر.", "YOUR DATA IS SAVED TWICE ON THIS DEVICE, IN TWO SEPARATE BROWSER STORES. SAFARI ON IPHONE CAN STILL ERASE A WEBSITE'S DATA AFTER ABOUT A WEEK WITHOUT OPENING IT. TO AVOID THAT, ADD THIS PAGE TO THE HOME SCREEN AND OPEN IT FROM THERE, OR OPEN THE APP AT LEAST ONCE A WEEK. CHROME AND EDGE KEEP THE DATA UNLESS THE DEVICE IS VERY LOW ON SPACE.": "بياناتك محفوظة مرتين على هذا الجهاز في مخزنين منفصلين بالمتصفح. ومع ذلك قد يمسح Safari على iPhone بيانات أي موقع بعد نحو أسبوع من عدم فتحه. لتجنب ذلك أضف هذه الصفحة إلى الشاشة الرئيسية وافتحها من هناك، أو افتح البرنامج مرة واحدة على الأقل أسبوعيًا. يحتفظ Chrome وEdge بالبيانات ما لم تكن مساحة الجهاز منخفضة جدًا.", "THE CLASS FILE HAS TWO SHEETS: \"CLASS DATA\" (EACH STUDENT WITH ATTENDANCE AND QUIZ GRADES) AND \"DASHBOARD\" (CLASS TOTALS). FOR ONE STUDENT, OPEN THE PROFILE AND PRESS EXPORT EXCEL. \"UPDATE MY EXISTING FILE\" REFRESHES ONLY THESE TWO SHEETS INSIDE YOUR OWN WORKBOOK AND KEEPS ANY OTHER SHEETS YOU ADDED.": "ملف الفصل فيه شيتان: \"Class data\" (كل طالب مع الحضور ودرجات الكويزات) و\"Dashboard\" (إجماليات الفصل). لتصدير طالب واحد افتح ملفه واضغط تصدير Excel. زر \"تحديث ملفي الحالي\" يحدّث هذين الشيتين فقط داخل ملفك ويُبقي أي شيتات أخرى أضفتها.", "ON IPHONE, SAFARI CAN ERASE A WEBSITE'S DATA AFTER ABOUT A WEEK WITHOUT OPENING IT. TO KEEP YOUR DATA SAFE, ADD THIS PAGE TO YOUR HOME SCREEN (SHARE, THEN ADD TO HOME SCREEN) AND OPEN IT FROM THERE.": "على iPhone قد يمسح Safari بيانات أي موقع بعد نحو أسبوع من عدم فتحه. للحفاظ على بياناتك أضف هذه الصفحة إلى الشاشة الرئيسية (مشاركة ثم إضافة إلى الشاشة الرئيسية) وافتحها من هناك.", "YOU ARE NOT SIGNED IN TO CLAUDE.AI, SO YOUR DATA IS SAVED ON THIS DEVICE ONLY. SIGN IN WITH YOUR ACCOUNT AND REOPEN THIS LINK TO USE IT ON YOUR PHONE AND LAPTOP.": "لم تسجّل الدخول إلى claude.ai، لذلك بياناتك محفوظة على هذا الجهاز فقط. سجّل الدخول بحسابك وأعد فتح هذا الرابط لاستخدامه على هاتفك وجهاز اللابتوب.", "OPEN THIS PAGE SIGNED IN ON ANY PHONE OR LAPTOP AND YOU GET THE SAME DATA. EACH ENGINEER WHO OPENS IT WITH THEIR OWN ACCOUNT HAS A SEPARATE PRIVATE WORKSPACE.": "افتح هذه الصفحة بعد تسجيل الدخول من أي هاتف أو لابتوب وستحصل على البيانات نفسها. كل مهندس يفتحها بحسابه الخاص له مساحة عمل خاصة ومنفصلة.", "SYNC IS OFF. OPEN THIS PAGE WHILE SIGNED IN TO CLAUDE.AI TO KEEP YOUR DATA ON EVERY DEVICE. RIGHT NOW IT IS STORED ON THIS DEVICE ONLY.": "المزامنة متوقفة. افتح هذه الصفحة وأنت مسجّل الدخول إلى claude.ai للاحتفاظ ببياناتك على كل أجهزتك. حاليًا بياناتك محفوظة على هذا الجهاز فقط.", "SYNC IS UNAVAILABLE FOR YOUR ACCESS LEVEL, SO DATA STAYS ON THIS DEVICE. ASK THE OWNER TO SHARE THIS PAGE WITH YOU AS A CONTRIBUTOR.": "المزامنة غير متاحة لمستوى صلاحيتك، لذلك تبقى البيانات على هذا الجهاز. اطلب من المالك مشاركة هذه الصفحة معك بصفة مساهم."};
+const LVW={High:'مرتفع',Medium:'متوسط',Low:'منخفض'},STW={Active:'جارية',Completed:'مكتملة',Closed:'مغلقة'};
+const ptsW=n=>Math.abs(+n)===1?'نقطة':'نقاط';
+const TP=(rx,s)=>[rx,(...m)=>s.replace(/\$(\d)/g,(_,i)=>m[+i]==null?'':m[+i])];
+const TRP=[
+ TP(/^\+(\d+) more$/,'+$1 أخرى'),
+ [/^(High|Medium|Low): (\d+)$/,(m,a,b)=>LVW[a]+': '+b],
+ [/^High ≥ (\S+)% · Medium ≥ (\S+)% · Low below\. Click a slice for names\.$/,(m,a,b)=>`مرتفع ≥ ${a}% · متوسط ≥ ${b}% · منخفض أقل من ذلك. اضغط على جزء لعرض الأسماء.`],
+ [/^([−-]?\d+(?:\.\d+)?) points?$/,(m,n)=>n+' '+ptsW(n)],
+ TP(/^No interaction at all \((\d+)\)$/,'لا توجد أي مشاركة ($1)'),
+ TP(/^STUDENTS \((\d+)\)$/,'الطلاب ($1)'),
+ TP(/^NEEDS ATTENTION \((\d+)\)$/,'تحتاج إلى متابعة ($1)'),
+ TP(/^IMPROVEMENT \((\d+)\)$/,'تحسّن ($1)'),
+ TP(/^(\d+) absent$/,'$1 غياب'),
+ TP(/^(\d+) days?$/,'$1 يوم'),
+ TP(/^(.*) — progress$/,'$1 — التقدم'),
+ TP(/^Attendance — (.*)$/,'الحضور — $1'),
+ TP(/^SESSION (.*)$/,'الحصة $1'),
+ TP(/^Columns: (\d+)$/,'الأعمدة: $1'),
+ [/^(Absent|Present) (.+)$/,(m,a,n)=>(a==='Absent'?'غائب ':'حاضر ')+n],
+ TP(/^Penalty for (.+)$/,'خصم لـ $1'),TP(/^Bonus for (.+)$/,'مكافأة لـ $1'),
+ [/^(Active|Completed|Closed) · due (.*)$/,(m,a,d)=>STW[a]+' · الموعد '+d],
+ TP(/^Target: (.*)$/,'الهدف: $1'),
+ TP(/^(\d+) and above$/,'$1 فأعلى'),
+ [/^(.*) · MAX (\S+) · (OPEN|CLOSED) · (\d+) graded$/,(m,a,b,c,d)=>`${a} · الدرجة العظمى ${b} · ${c==='OPEN'?'مفتوح':'مغلق'} · تم تصحيح ${d}`],
+ TP(/^GRADED (\d+)\/(\d+) · MEAN (\S+) · MEDIAN (\S+) · HIGH (\S+) · LOW (\S+) · PASS (\S+)$/,'تم تصحيح $1/$2 · المتوسط $3 · الوسيط $4 · الأعلى $5 · الأدنى $6 · النجاح $7'),
+ TP(/^Made by mostafa saeed · (.*)$/,'تطوير: مصطفى سعيد · $1'),
+ TP(/^Saved (.+)$/,'تم حفظ $1'),TP(/^Excel export failed: (.*)$/,'فشل تصدير Excel: $1'),TP(/^Export failed: (.*)$/,'فشل التصدير: $1'),
+ TP(/^Preparing (.*)$/,'جارٍ تحضير $1'),
+ TP(/^Last backup (.*)$/,'آخر نسخة احتياطية $1'),
+ TP(/^(.*) — class report$/,'$1 — تقرير الفصل'),TP(/^(.*) — student report$/,'$1 — تقرير الطالب'),
+ // alert messages
+ TP(/^(\d+) consecutive scheduled sessions missed\.$/,'غاب عن $1 حصص متتالية مجدولة.'),
+ TP(/^(— )?Sudden drop: baseline (\S+)% → (\S+)% on "(.*)" \(([−-]?\d+) pts, rule ≥(\d+)\)\.$/,'$1انخفاض مفاجئ: المستوى السابق $2% ← $3% في "$4" ($5 نقطة، القاعدة ≥$6).'),
+ TP(/^(— )?Persistent low performance: average (\S+)% over (\d+) quizzes \(threshold (\S+)%\)\.$/,'$1ضعف مستمر في الأداء: المتوسط $2% في $3 كويزات (الحد $4%).'),
+ TP(/^(— )?Declining trend: (\S+)% → (\S+)% \(([−+-]?\S+) pts, (\d+) quizzes\)\.$/,'$1اتجاه متراجع: $2% ← $3% ($4 نقطة، $5 كويزات).'),
+ TP(/^(— )?Improving: (\S+)% → (\S+)% \(\+(\S+) pts\)\.$/,'$1تحسّن: $2% ← $3% (+$4 نقطة).'),
+ TP(/^(— )?Low engagement: average net (\S+) over the last 3 ended sessions\.$/,'$1ضعف المشاركة: متوسط الصافي $2 خلال آخر 3 حصص منتهية.'),
+ // import wizard
+ TP(/^SMART IMPORT — (.*)$/,'الاستيراد الذكي — $1'),
+ TP(/^\((\d+) students, (\d+) columns\)$/,'($1 طالب، $2 عمود)'),
+ [/^new · (\d+) already in this class(?: ·)?$/,(m,n)=>`جديد · ${n} موجود بالفعل في هذا الفصل ·`],
+ TP(/^Add the new students \((\d+)\)$/,'إضافة الطلاب الجدد ($1)'),
+ TP(/^Same person as (.*)$/,'نفس الشخص مثل $1'),
+ TP(/^(\d+) values · e\.g\. (.*)$/,'$1 قيمة · مثال: $2'),
+ TP(/^(\d+) values above the max will be skipped$/,'سيتم تخطي $1 قيمة أعلى من الدرجة العظمى'),
+ TP(/^New students: (\d+)(?: · existing students skipped: (\d+))?$/,'طلاب جدد: $1'),
+ [/^New students: (\d+) · existing students skipped: (\d+)$/,(m,a,b)=>`طلاب جدد: ${a} · طلاب موجودون تم تخطيهم: ${b}`],
+ TP(/^Attendance: (\d+) new, (\d+) already identical, (\d+) updated, (\d+) conflicts kept as they were$/,'الحضور: $1 جديد، $2 متطابق بالفعل، $3 تم تحديثه، $4 تعارضات تُركت كما هي'),
+ TP(/^Quizzes: (\d+) new scores, (\d+) already identical, (\d+) updated, (\d+) conflicts kept as they were$/,'الكويزات: $1 درجات جديدة، $2 متطابقة بالفعل، $3 تم تحديثها، $4 تعارضات تُركت كما هي'),
+ [/^New attendance days: (\d+) · new quizzes: (\d+)(?: · ID\/group fields filled: (\d+))?$/,(m,a,b,c)=>`أيام حضور جديدة: ${a} · كويزات جديدة: ${b}`+(c?` · حقول الرقم/المجموعة المملوءة: ${c}`:'')],
+ TP(/^Blank cells \(left as Not Recorded \/ not graded\): (\d+) · unreadable or out-of-range values skipped: (\d+)$/,'خلايا فارغة (تُركت كغير مسجل / غير مصحح): $1 · قيم غير مقروءة أو خارج النطاق تم تخطيها: $2'),
+ TP(/^(\d+) blank cells \(kept as Not Recorded, never as Absent or zero\)$/,'$1 خلية فارغة (تُركت كغير مسجل، ولا تُحسب غيابًا أو صفرًا)'),
+ TP(/^(\d+) unreadable or out-of-range values \(skipped\)$/,'$1 قيمة غير مقروءة أو خارج النطاق (تم تخطيها)'),
+ TP(/^(\d+) repeated student rows in the file \(last value wins\)$/,'$1 صف طالب مكرر في الملف (تُعتمد آخر قيمة)'),
+ TP(/^(\d+) duplicated columns \(same day or quiz twice\)$/,'$1 أعمدة مكررة (نفس اليوم أو الكويز مرتين)'),
+ TP(/^(\d+) quizzes already exist with a different maximum \(existing maximum is kept\)$/,'$1 كويز موجود بالفعل بدرجة عظمى مختلفة (تُحفظ الدرجة العظمى الحالية)'),
+ TP(/^(\d+) values differ from what is saved \(kept unless you choose "Update"\)$/,'$1 قيمة تختلف عن المحفوظ (تبقى كما هي إلا إذا اخترت "تحديث")'),
+ TP(/^(\d+) names need a decision below$/,'$1 أسماء تحتاج إلى قرارك بالأسفل'),
+ [/^Please review "(.*)": (.*)\. Change its type, or press "Looks right"\.$/,(m,h,w)=>`يرجى مراجعة "${h}": ${trs(w)}. غيّر نوعه أو اضغط "سليم".`],
+ TP(/^Quiz "(.*)" has no maximum score\. Enter it \(percentages need it\)\.$/,'الكويز "$1" ليس له درجة عظمى. أدخلها (النِّسب تحتاج إليها).'),
+ TP(/^Import finished: (\d+) new students, (\d+) attendance marks, (\d+) quiz scores saved\.$/,'تم الاستيراد: $1 طلاب جدد، $2 علامات حضور، $3 درجات كويزات تم حفظها.'),
+ [/^0\/1 column with no header, one of (.*)$/,(m,r)=>'عمود 0/1 بدون عنوان، واحد من '+r],
+];
+Object.assign(TRD,{"Behavior %":"نسبة السلوك","Reason / note":"السبب / ملاحظة","Bonus note:":"ملاحظة البونص:","AUTOMATIC SNAPSHOTS":"نسخ تلقائية","Restore this snapshot":"استعادة هذه النسخة","No snapshots yet.":"لا توجد نسخ بعد.","Loading…":"جارٍ التحميل…","Replace the current data with this snapshot? The current data is saved as a snapshot first.":"استبدال البيانات الحالية بهذه النسخة؟ هيتم حفظ البيانات الحالية كنسخة أولًا.","Replace the current data with this backup? The current data is saved as a snapshot first.":"استبدال البيانات الحالية بهذه النسخة الاحتياطية؟ هيتم حفظ البيانات الحالية كنسخة أولًا.","class/group column is ignored":"عمود الفصل/المجموعة يتم تجاهله","ID/code column is ignored":"عمود الرقم/الكود يتم تجاهله","Step":"الخطوة","Give each student bonus on Behavior, on Quiz grade, or both. Use − / + or type a number.":"أدّي كل طالب بونص على السلوك أو على درجة الكويزات أو الاتنين. استخدم − / + أو اكتب رقم.","Blank = not recorded. Bonus given in the Bonus tab is added to the total.":"الفراغ = غير مسجل. البونص من تبويب البونص بيتضاف على الإجمالي.","Behavior:":"السلوك:","Quiz:":"الكويزات:","BONUS → BEHAVIOR":"بونص ← السلوك","BONUS → QUIZ":"بونص ← الكويزات","BEHAVIOR":"السلوك","BONUS":"البونص","BEHAVIOR & BONUS":"السلوك والبونص","ADD THE BONUS TO:":"أضف البونص إلى:","Behavior":"السلوك","Quiz grades":"درجات الكويزات","Bonus goes to":"البونص يضاف إلى","QUIZ GRADE":"درجة الكويزات","Behavior total":"إجمالي السلوك","Quiz grade":"درجة الكويزات","Total:":"الإجمالي:","Max":"الحد الأقصى","Blank = not recorded.":"الفراغ = غير مسجل.","Type each student's bonus points. Blank = no bonus.":"اكتب نقاط البونص لكل طالب. الفراغ = بدون بونص.","The bonus is added to this total (change it in the Bonus tab).":"البونص بيضاف على الإجمالي ده (تقدر تغيّر ده من تبويب البونص).","added to quiz grades":"يُضاف إلى درجات الكويزات","added to behavior":"يُضاف إلى السلوك","ALL STUDENTS — ranked by quiz grade · click a name for the full record":"كل الطلاب — مرتبون حسب درجات الكويزات · اضغط على الاسم لعرض السجل الكامل","Sort: list order":"الترتيب: ترتيب القائمة","Reset order (A→Z)":"إعادة الترتيب (أ→ي)","Drag the ⠿ handle to reorder (or focus it and press ↑ ↓). The order is used everywhere: attendance, quizzes, live and exports.":"اسحب علامة ⠿ لتغيير الترتيب (أو اضغط عليها واستخدم ↑ ↓). الترتيب بيتطبق في كل مكان: الحضور والكويزات والمتابعة والتصدير.","Drag to reorder":"اسحب لتغيير الترتيب","Export CSV (this class)":"تصدير CSV (هذا الفصل)","Export all classes (file per class)":"تصدير كل الفصول (ملف لكل فصل)","Position":"الترتيب","Move up":"تحريك لأعلى","Move down":"تحريك لأسفل","Enter a number":"أدخل رقمًا","Go back to the automatic alphabetical order for this class?":"الرجوع للترتيب الأبجدي التلقائي لهذا الفصل؟"});
+Object.keys(TRD).forEach(k=>{const u=k.toUpperCase();if(!(u in TRD))TRD[u]=TRD[k]});
+function trCore(c){const k=c.replace(/\s+/g,' ');if(Object.prototype.hasOwnProperty.call(TRD,k))return TRD[k];for(const [rx,fn] of TRP){const mm=rx.exec(k);if(mm)return fn(...mm)}return c}
+function trs(s){if(!D||!D.set||D.set.lang!=='ar'||typeof s!=='string')return s;const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s);if(!m[2])return s;const r=trCore(m[2]);return r===m[2]?s:m[1]+r+m[3]}
+function trMsg(s){return typeof s==='string'?s.split('\n').map(trs).join('\n'):s}
+const trTxt=new WeakMap(),trAtt=new WeakMap(),TRATT=['placeholder','title','aria-label','alt'];
+function trNode(n){if(n.nodeType!==3)return;const p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;const v=n.nodeValue,rec=trTxt.get(n);if(rec&&v===rec.ar)return;const r=trs(v);if(r!==v){trTxt.set(n,{en:v,ar:r});n.nodeValue=r}else if(rec)trTxt.delete(n)}
+function trAttrs(e){if(!e.getAttribute)return;TRATT.forEach(a=>{const v=e.getAttribute(a);if(v==null)return;let m=trAtt.get(e);const rec=m&&m[a];if(rec&&v===rec.ar)return;const r=trs(v);if(r!==v){if(!m){m={};trAtt.set(e,m)}m[a]={en:v,ar:r};e.setAttribute(a,r)}else if(rec)delete m[a]})}
+function trDom(root){if(!root)return;if(root.nodeType===3){trNode(root);return}if(root.nodeType!==1)return;if(/^(SCRIPT|STYLE)$/.test(root.nodeName))return;trAttrs(root);const w=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.nodeType===3)trNode(n);else if(!/^(SCRIPT|STYLE)$/.test(n.nodeName))trAttrs(n)}}
+function trRestore(root){if(!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.nodeType===3){const r=trTxt.get(n);if(r&&n.nodeValue===r.ar){n.nodeValue=r.en}trTxt.delete(n)}else{const m=trAtt.get(n);if(m){Object.keys(m).forEach(a=>{if(n.getAttribute(a)===m[a].ar)n.setAttribute(a,m[a].en)});trAtt.delete(n)}}}}
+function trHTML(h){return h.replace(/>([^<>]+)</g,(m,t)=>'>'+trs(t)+'<')}
+const TROPT={childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:TRATT};let trObs=null;
+function trStart(){if(trObs||typeof MutationObserver==='undefined')return;trObs=new MutationObserver(recs=>{if(D.set.lang!=='ar')return;trObs.disconnect();try{recs.forEach(r=>{if(r.type==='childList')r.addedNodes.forEach(trDom);else if(r.type==='characterData')trNode(r.target);else if(r.type==='attributes')trAttrs(r.target)})}finally{trObs.takeRecords();trObs.observe(document.body,TROPT)}});trObs.observe(document.body,TROPT)}
+['alert','confirm','prompt'].forEach(k=>{const o=window[k].bind(window);window[k]=(m,...a)=>o(D&&D.set&&D.set.lang==='ar'?trMsg(m):m,...a)});
+function trApply(){document.documentElement.lang=D.set.lang==='ar'?'ar':'en';const lb=document.getElementById('lang');if(lb)lb.textContent=D.set.lang==='ar'?'English':'عربي';if(D.set.lang==='ar'){trStart();trDom(document.body)}else trRestore(document.body)}
+
+const tabs=['Dashboard','Students','Attendance','Quiz','Behavior','Bonus','Live','Practical Skills','Alerts','Settings'];
+let tab='Attendance',q='',pid=null,dTier=null;
+const today=()=>new Date().toISOString().slice(0,10);
+// ---- calculations ----
+const act=()=>D.students.filter(s=>s.status==='Active'&&s.cls===D.curClass).sort((a,b)=>stuCmp(a,b));
+const live=()=>D.events.filter(e=>!e.reversed);
+const sessScore=(sid,stid)=>live().filter(e=>e.sess===sid&&e.stu===stid).reduce((a,e)=>a+e.pts,0);
+function results(stid){return D.assess.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(a=>{const v=a.scores[stid];return v==null||v===''?null:{date:a.date,p:100*v/a.max,t:a.title,v,max:a.max}}).filter(Boolean)}
+const avg=a=>a.length?a.reduce((s,x)=>s+x.p,0)/a.length:null;
+// ---- behavior / bonus / quiz grade helpers ----
+const fmt=n=>Math.round(n*10)/10;
+const nv=v=>{const x=parseFloat(v);return isFinite(x)?x:null};
+const behRaw=id=>nv((D.behavior||{})[id]),bonB=id=>nv((D.bonusB||{})[id]),bonQ=id=>nv((D.bonusQ||{})[id]);
+function behTotal(id){const b=behRaw(id),n=bonB(id);return b==null&&n==null?null:(b||0)+(n||0)}
+function quizTot(id){const R=results(id),b=bonQ(id);if(!R.length&&b==null)return null;const m=R.length?avg(R):null,mm=R.length?R.reduce((x,r)=>x+r.max,0)/R.length:0;return{p:m==null?null:m+(b&&mm?100*b/mm:0),b,m}}
+function qGradeTxt(id){const q=quizTot(id);if(!q)return '—';const bt=q.b?` (+${fmt(q.b)} bonus)`:'';return q.p==null?(q.b?`+${fmt(q.b)} bonus`:'—'):q.p.toFixed(1)+'%'+bt}
+const qGrade=id=>{const q=quizTot(id);return q&&q.p!=null?q.p:null};
+function behPct(id){const t=behTotal(id),mx=+D.set.behMax||10;return t==null?null:100*t/mx}
+const behTxt=id=>{const t=behTotal(id);return t==null?'—':`${fmt(t)} (${Math.round(behPct(id))}%)`};
+function rankQuiz(rows){let rk=0,last;return byQuiz(rows).map((r,i)=>{const q=quizTot(r.s.id),k=q&&q.p!=null?Math.round(q.p*10)/10:null;if(k!==last)rk=i+1;last=k;return{r,rk:k==null?'—':rk}})}
+function nextCode(){const u=new Set(D.students.map(s=>s.code));let n=D.students.length+1;while(u.has('S'+n))n++;return 'S'+n}
+function byQuiz(rows){return rows.map((r,i)=>({r,i,p:(quizTot(r.s.id)||{}).p})).sort((a,b)=>((a.p==null)-(b.p==null))||(b.p-a.p)||(a.i-b.i)).map(x=>x.r)}
+// ---- manual student order ----
+const clsList=()=>D.students.filter(s=>s.cls===D.curClass).sort(stuCmp);
+function applyOrd(L){L.forEach((s,i)=>s.ord=i+1);save();go()}
+function moveStu(id,d){const L=clsList(),i=L.findIndex(s=>s.id===id),j=i+d;if(i<0||j<0||j>=L.length)return;[L[i],L[j]]=[L[j],L[i]];applyOrd(L)}
+function resetOrd(){if(!confirm('Go back to the automatic alphabetical order for this class?'))return;D.students.filter(s=>s.cls===D.curClass).forEach(s=>{delete s.ord});save();go()}
+function ordCtl(s,i,n){if(stuSort!=='name'||q)return `<span class="mono mut">${i+1}</span>`;return `<span class="dh" tabindex="0" role="button" data-id="${s.id}" aria-label="Drag to reorder" title="Drag to reorder" onpointerdown="dragStart(event,'${s.id}')" onkeydown="dragKey(event,'${s.id}')">⠿</span> <span class="mono mut">${i+1}</span>`}
+function commitOrd(ids){ids.forEach((id,i)=>{const s=D.students.find(x=>x.id===id);if(s)s.ord=i+1});save();go()}
+function dragKey(e,id){const d=e.key==='ArrowUp'?-1:e.key==='ArrowDown'?1:0;if(!d)return;e.preventDefault();moveStu(id,d);const h=document.querySelector('.dh[data-id="'+id+'"]');if(h)h.focus()}
+let DR=null;
+function dragUpd(){if(!DR)return;const y=DR.y;document.querySelectorAll('tr.dt-top,tr.dt-bot').forEach(r=>r.classList.remove('dt-top','dt-bot'));DR.tgt=null;
+ const rows=[...DR.tr.parentNode.querySelectorAll('tr[data-id]')];let best=null;
+ for(const r of rows){const b=r.getBoundingClientRect();if(y>=b.top&&y<=b.bottom){best=r;DR.after=y>b.top+b.height/2;break}}
+ if(!best&&rows.length){const f=rows[0].getBoundingClientRect(),l=rows[rows.length-1].getBoundingClientRect();if(y<f.top){best=rows[0];DR.after=false}else if(y>l.bottom){best=rows[rows.length-1];DR.after=true}}
+ if(best&&best!==DR.tr){DR.tgt=best;best.classList.add(DR.after?'dt-bot':'dt-top')}}
+function dragMove(e){if(!DR)return;DR.x=e.clientX;DR.y=e.clientY;DR.g.style.left=(e.clientX+14)+'px';DR.g.style.top=(e.clientY-18)+'px';dragUpd()}
+function dragStop(){const d=DR;if(!d)return null;DR=null;clearInterval(d.t);document.removeEventListener('pointermove',dragMove);document.removeEventListener('pointerup',dragEnd);document.removeEventListener('pointercancel',dragCancel);d.g.remove();d.tr.classList.remove('dragging');document.querySelectorAll('tr.dt-top,tr.dt-bot').forEach(r=>r.classList.remove('dt-top','dt-bot'));document.body.style.userSelect='';return d}
+function dragCancel(){dragStop()}
+function dragEnd(){const d=dragStop();if(!d||!d.tgt)return;const ids=clsList().map(s=>s.id).filter(x=>x!==d.id),k=ids.indexOf(d.tgt.dataset.id);if(k<0)return;ids.splice(d.after?k+1:k,0,d.id);commitOrd(ids)}
+function dragStart(e,id){if(e.button>0||DR)return;e.preventDefault();const tr=e.currentTarget.closest('tr'),a=tr.querySelector('.nm'),g=document.createElement('div');g.className='dghost';g.textContent=a?a.textContent:'';document.body.appendChild(g);document.body.style.userSelect='none';
+ DR={id,tr,g,tgt:null,after:false,x:e.clientX,y:e.clientY};tr.classList.add('dragging');dragMove(e);
+ DR.t=setInterval(()=>{if(!DR)return;if(DR.y<90)window.scrollBy(0,-12);else if(DR.y>innerHeight-90)window.scrollBy(0,12);else return;dragUpd()},16);
+ document.addEventListener('pointermove',dragMove);document.addEventListener('pointerup',dragEnd);document.addEventListener('pointercancel',dragCancel)}
+const tier=p=>p>=D.set.hi?['High','hi']:p>=D.set.mid?['Medium','md']:['Low','lo'];
+function trend(id){const r=results(id);if(r.length<D.set.minN)return{c:'Insufficient Data',n:r.length};
+ const k=Math.min(3,Math.floor(r.length/2)),rec=avg(r.slice(-k)),old=avg(r.slice(-2*k,-k)),d=rec-old;
+ return{c:d>=5?'Improving':d<=-5?'Declining':'Stable',d,rec,old,n:r.length}}
+function attStats(id){const ss=D.sessions.slice().sort((a,b)=>a.date.localeCompare(b.date));let p=0,ab=0,run=0,tot=0;
+ ss.forEach(s=>{const v=(D.att[s.id]||{})[id];if(!v||v==='Excused')return;tot++;if(v==='Absent'){ab++;run++}else{run=0;p++}});
+ return{pct:tot?100*p/tot:null,ab,cons:run,tot}}
+function skillLatest(id){const o={};D.skillAssess.filter(x=>x.stu===id&&x.n===10).forEach(x=>o[x.skill]=x.lvl);return o}
+function alerts(only){const out=[];(only?D.students.filter(s=>s.id===only):act()).forEach(s=>{
+ const a=attStats(s.id);if(a.cons>=D.set.absN)out.push({s,key:'abs',sev:'High',k:'neg',m:`${a.cons} consecutive scheduled sessions missed.`,act:'Contact the student about attendance.'});
+ const r=results(s.id);
+ if(r.length>=2){const last=r[r.length-1],base=avg(r.slice(0,-1).slice(-3));if(base-last.p>=D.set.drop)out.push({s,key:'drop',sev:'High',k:'neg',m:`Sudden drop: baseline ${base.toFixed(0)}% → ${last.p.toFixed(0)}% on "${last.t}" (−${(base-last.p).toFixed(0)} pts, rule ≥${D.set.drop}).`,act:'Review the quiz with the student; consider a development plan.'})}
+ if(r.length>=D.set.minN){const m=avg(r);if(m<D.set.low)out.push({s,key:'low',sev:'Medium',k:'',m:`Persistent low performance: average ${m.toFixed(0)}% over ${r.length} quizzes (threshold ${D.set.low}%).`,act:'Offer targeted practice or revision.'})}
+ const tr=trend(s.id);
+ if(tr.c==='Declining')out.push({s,key:'decl',sev:'Medium',k:'',m:`Declining trend: ${tr.old.toFixed(0)}% → ${tr.rec.toFixed(0)}% (${tr.d.toFixed(1)} pts, ${tr.n} quizzes).`,act:'Monitor and discuss.'});
+ if(tr.c==='Improving')out.push({s,key:'impr',sev:'Positive',k:'pos',m:`Improving: ${tr.old.toFixed(0)}% → ${tr.rec.toFixed(0)}% (+${tr.d.toFixed(1)} pts).`,act:'Acknowledge the progress.'});
+ const ses=D.sessions.filter(x=>x.status==='Ended'&&x.cls===s.cls).slice(-3);
+ if(ses.length>=3){const net=ses.reduce((x,y)=>x+sessScore(y.id,s.id),0)/3;if(net<=D.set.lowEng)out.push({s,key:'eng',sev:'Medium',k:'',m:`Low engagement: average net ${net.toFixed(1)} over the last 3 ended sessions.`,act:'Check in privately. Events reflect instructor observations only.'})}
+ });return out.map(a=>{const id=a.s.id+'|'+a.key,r=(D.alertSt||{})[id];return{...a,id,st:r&&r.sig===a.m?r.st:'new'}})}
+// ---- charts ----
+function line(pts,h=140,mx=100,u='%'){if(!pts.length)return '<span class="mut">No data yet.</span>';const w=320,L=26,B=h-18,n=pts.length,x=i=>L+(n===1?(w-L)/2:i*(w-L-8)/(n-1)),y=v=>8+(B-8)*(1-v/mx);
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${[0,mx/2,mx].map(g=>`<line x1="${L}" x2="${w}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/><text x="0" y="${y(g)+3}">${g}</text>`).join('')}
+ <polyline fill="none" stroke="var(--olive)" stroke-width="2" points="${pts.map((p,i)=>x(i)+','+y(p.v)).join(' ')}"/>${pts.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.v)}" r="3.5" fill="var(--ink)"><title>${esc(p.l)}: ${p.v.toFixed(0)}${u}</title></circle>`).join('')}</svg>`}
+function bars(items,max){if(!items.length)return '<span class="mut">No data yet.</span>';return items.map(i=>`<div class="bar" ${i.c?`onclick="${i.c}"`:''}><span style="width:120px" class="lb">${esc(i.l)}</span><i style="width:${Math.max(2,100*i.v/Math.max(max,1)*.55)}%"></i><b>${i.t??i.v}</b></div>`).join('')}
+const DA=(k,l)=>`<button class="btn" onclick="del('${k}','',this)">${l}</button>`;
+function donut(it){const tot=it.reduce((a,x)=>a+x.v,0);if(!tot)return '<span class="mut">No graded students yet.</span>';let a0=-Math.PI/2;const R=50,r=30,c=60;
+ const arcs=it.map(x=>{if(!x.v)return '';const a1=a0+2*Math.PI*x.v/tot,big=a1-a0>Math.PI?1:0,p=(rr,a)=>(c+rr*Math.cos(a)).toFixed(2)+' '+(c+rr*Math.sin(a)).toFixed(2);let d;
+  if(x.v===tot)d=`M${c} ${c-R}A${R} ${R} 0 1 1 ${c-.01} ${c-R}L${c-.01} ${c-r}A${r} ${r} 0 1 0 ${c} ${c-r}Z`;else d=`M${p(R,a0)}A${R} ${R} 0 ${big} 1 ${p(R,a1)}L${p(r,a1)}A${r} ${r} 0 ${big} 0 ${p(r,a0)}Z`;a0=a1;
+  return `<path d="${d}" fill="${x.col}" style="cursor:pointer" onclick="${x.c}"><title>${x.l}: ${x.v}</title></path>`}).join('');
+ return `<div class="row" style="gap:18px"><svg viewBox="0 0 120 120" width="150" role="img">${arcs}<text x="60" y="65" text-anchor="middle" style="font-size:18px;font-weight:700">${tot}</text></svg><div>${it.map(x=>`<div class="bar" onclick="${x.c}"><i style="width:14px;height:14px;background:${x.col}"></i>${x.l}: <b>${x.v}</b></div>`).join('')}</div></div>`}
+function cols(it,lo,hi){if(!it.length)return '<span class="mut">No data yet.</span>';const w=320,h=150,L=4,B=h-22,T=16,n=it.length,bw=Math.min(36,(w-L)/n*.6),y=v=>T+(B-T)*(1-(v-lo)/(hi-lo)),z=y(Math.max(lo,0));
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img"><line x1="0" x2="${w}" y1="${z}" y2="${z}" stroke="var(--line)"/>${it.map((d,i)=>{const cx=L+(i+.5)*(w-L)/n,yy=y(d.v);return `<rect x="${cx-bw/2}" y="${Math.min(yy,z)}" width="${bw}" height="${Math.max(1,Math.abs(z-yy))}" fill="${d.v<0?'var(--bad)':'var(--olive)'}"/><text x="${cx}" y="${Math.min(yy,z)-3}" text-anchor="middle">${d.t??d.v}</text><text x="${cx}" y="${h-8}" text-anchor="middle">${esc(d.l.slice(5))}</text>`}).join('')}</svg>`}
+// ---- views ----
+const V={};
+const nm=s=>`<a class="nm" tabindex="0" onclick="openStu('${s.id}')" onkeydown="if(event.key==='Enter'){event.stopPropagation();openStu('${s.id}')}">${esc(s.name)}</a>`;
+V.Dashboard=()=>{const S=act(),rows=S.map(s=>({s,m:avg(results(s.id)),tr:trend(s.id)}));
+ const ranked=rows.filter(x=>x.m!=null).sort((a,b)=>b.m-a.m);const tiers={High:[],Medium:[],Low:[]};ranked.forEach(x=>tiers[tier(x.m)[0]].push(x));
+ const all=D.assess.filter(a=>a.cls===D.curClass).flatMap(a=>Object.values(a.scores).filter(v=>v!==''&&v!=null).map(v=>100*v/a.max)),ats=S.map(s=>attStats(s.id).pct).filter(x=>x!=null);
+ const ss=D.sessions.filter(x=>x.cls===D.curClass).sort((a,b)=>a.date.localeCompare(b.date));
+ const qa=D.assess.filter(a=>a.cls===D.curClass).slice().sort((a,b)=>a.date.localeCompare(b.date)).map(a=>{const v=Object.values(a.scores).filter(x=>x!==''&&x!=null);return v.length?{l:a.title,v:v.reduce((x,y)=>x+100*y/a.max,0)/v.length}:null}).filter(Boolean);
+ const att=ss.map(s=>{const m=D.att[s.id]||{},p=S.filter(x=>m[x.id]==='Present').length,tt=S.filter(x=>m[x.id]).length;return tt?{l:s.date,v:100*p/tt,t:Math.round(100*p/tt)+'%'}:null}).filter(Boolean);
+ const eng=ss.filter(s=>s.status==='Ended').slice(-8).map(s=>{const v=S.reduce((a,x)=>a+sessScore(s.id,x.id),0);return{l:s.date,v,t:v}});
+ const li=a=>a.map((x,i)=>`<div class="li"><span class="mono mut">${i+1}</span><span class="n">${nm(x.s)}</span><b>${x.m.toFixed(1)}%</b></div>`).join('')||'<span class="mut">No graded students yet.</span>';
+ return `<div class="row noexp"><button class="btn" onclick="clsReport()">Class report</button><button class="btn" onclick="exportXlsx()">Export Excel</button><button class="btn pri" onclick="exportView('dash','pdf',null,this)">Dashboard PDF</button><button class="btn" onclick="exportView('dash','png',null,this)">Dashboard PNG</button><span class="lb">Opens as a file — print it or save as PDF</span></div><div class="stats"><div><div class="lb">ACTIVE STUDENTS</div><div class="big">${S.length}</div></div><div><div class="lb">CLASS AVERAGE</div><div class="big">${all.length?(all.reduce((a,b)=>a+b,0)/all.length).toFixed(0)+'%':'—'}</div></div><div><div class="lb">ATTENDANCE</div><div class="big">${ats.length?(ats.reduce((a,b)=>a+b,0)/ats.length).toFixed(0)+'%':'—'}</div></div><div><div class="lb">OPEN ALERTS</div><div class="big">${alerts().filter(a=>a.k!=='pos'&&a.st!=='resolved').length}</div></div></div>
+ <div class="ch"><section><h2>Performance levels</h2>${donut([{l:'High',col:'#2c5a47'},{l:'Medium',col:'#b8f200'},{l:'Low',col:'#111111'}].map(x=>({...x,v:tiers[x.l].length,c:`dTier='${x.l}';go()`})))}
+ <p class="lb">High ≥ ${D.set.hi}% · Medium ≥ ${D.set.mid}% · Low below. Click a slice for names.</p></section>
+ <section><h2>Quiz average over time (%)</h2>${line(qa)}</section>
+ <section><h2>Attendance per session (%)</h2>${cols(att.slice(-8),0,100)}</section>
+ </div>
+ ${dTier?`<section><h2>${dTier.toUpperCase()} LEVEL STUDENTS <a class="nm" onclick="dTier=null;go()">clear</a></h2>${li(tiers[dTier])}</section>`:''}
+ ${liveBoard()}
+ <div class="ch"><section><h2>TOP 5 — QUIZ AVERAGE</h2>${li(ranked.slice(0,5))}</section><section><h2>BOTTOM 5 — QUIZ AVERAGE</h2>${li(ranked.slice(-5).reverse())}</section></div>
+ <section><h2>ALL STUDENTS — ranked by quiz grade · click a name for the full record</h2><div class="wrap"><table><tr><th>#</th><th>NAME</th><th>QUIZ GRADE</th><th>AVG</th><th>LEVEL</th><th>TREND</th><th>ATT.</th><th>BEHAVIOR</th></tr>${rankQuiz(rows).map(({r,rk})=>{const a=attStats(r.s.id);return `<tr><td>${rk}</td><td>${nm(r.s)}</td><td>${qGradeTxt(r.s.id)}</td><td>${r.m==null?'—':r.m.toFixed(1)+'%'}</td><td>${r.m==null?'—':`<span class="tg ${tier(r.m)[1]}">${tier(r.m)[0]}</span>`}</td><td>${r.tr.c}</td><td>${a.pct==null?'—':a.pct.toFixed(0)+'%'}</td><td>${behTxt(r.s.id)}</td></tr>`}).join('')||'<tr><td class="mut">No students yet.</td></tr>'}</table></div></section>`};
+function profile(id){const s=D.students.find(x=>x.id===id);if(!s){pid=null;return V.Students()}
+ const r=results(id),m=avg(r),tr=trend(id),a=attStats(id),sk=skillLatest(id),A=alerts(id).filter(x=>x.st!=='resolved'),P=D.plans.filter(p=>p.stu===id);
+ const ses=D.sessions.slice().sort((x,y)=>x.date.localeCompare(y.date)),net=live().filter(e=>e.stu===id).reduce((x,e)=>x+e.pts,0);
+ return `<p class="noexp"><a class="nm" onclick="pid=null;go()">← Back</a></p><section><h2>STUDENT RECORD</h2><div class="row"><input value="${esc(s.name)}" aria-label="Student name" style="flex:1;min-width:160px;font-size:20px;font-weight:700" onchange="renStu('${id}',this.value)"><button class="btn pri noexp" onclick="stuReport('${id}')">Report</button><button class="btn noexp" onclick="exportStu('${id}')">Student data (Excel)</button><button class="btn noexp" onclick="exportView('stu','pdf','${id}',this)">Dashboard (PDF)</button><button class="btn noexp" onclick="exportView('stu','png','${id}',this)">Dashboard (PNG)</button></div>
+ <div class="stats"><div><div class="lb">QUIZ AVERAGE</div><div class="big">${m==null?'—':m.toFixed(0)+'%'}</div></div><div><div class="lb">LEVEL</div><div class="big ${m==null?'':tier(m)[1]}" style="font-size:22px">${m==null?'—':tier(m)[0]}</div></div><div><div class="lb">TREND</div><div style="font-size:18px;font-weight:600">${tr.c}</div></div><div><div class="lb">ATTENDANCE</div><div class="big">${a.pct==null?'—':a.pct.toFixed(0)+'%'}</div><div class="lb">${a.ab} absent</div></div></div></section>
+ <section><h2>LIVE POINTS <span class="lb">(kept separate from quiz scores)</span></h2>${(()=>{const R=liveRows('all').sort((a,b)=>b.net-a.net),me=R.find(x=>x.s.id===id);if(!me)return '<span class="mut">No data.</span>';const rank=R.filter(x=>x.net>me.net).length+1;return `<div class="stats"><div><div class="lb">NET POINTS</div><div class="big">${me.net}</div></div><div><div class="lb">BONUS</div><div class="big">${me.b}</div></div><div><div class="lb">PENALTY</div><div class="big">${me.p}</div></div><div><div class="lb">RANK IN CLASS</div><div class="big">${me.n?rank+'/'+R.length:'—'}</div>${me.n?'':'<div class="lb">No interaction yet</div>'}</div></div>`})()}</section>
+ <section><h2>BEHAVIOR &amp; BONUS</h2><div class="stats"><div><div class="lb">BEHAVIOR</div><div class="big">${behTxt(id)}</div></div><div><div class="lb">BONUS → BEHAVIOR</div><div class="big">${bonB(id)==null?'—':fmt(bonB(id))}</div></div><div><div class="lb">BONUS → QUIZ</div><div class="big">${bonQ(id)==null?'—':fmt(bonQ(id))}</div></div><div><div class="lb">QUIZ GRADE</div><div class="big" style="font-size:22px">${qGradeTxt(id)}</div></div></div>${(D.bonusNote||{})[id]?`<p class="lb">Bonus note: ${esc(D.bonusNote[id])}</p>`:''}</section>
+ <section><h2>NOTES</h2><textarea rows="3" style="width:100%" aria-label="Notes" onchange="setNoteS('${id}',this.value)">${esc(s.notes||'')}</textarea></section>
+ <div class="ch"><section><h2>QUIZ SCORES</h2>${line(r.map(x=>({l:x.t,v:x.p})))}<table><tr><th>QUIZ</th><th>DATE</th><th>SCORE</th><th>%</th></tr>${r.map(x=>`<tr><td>${esc(x.t)}</td><td class="mono">${dt(x.date)}</td><td>${x.v}/${x.max}</td><td>${x.p.toFixed(0)}%</td></tr>`).join('')||'<tr><td class="mut">No grades.</td></tr>'}</table></section>
+ <section><h2>LIVE POINTS BY SESSION</h2>${bars(ses.filter(x=>D.events.some(e=>e.sess===x.id&&e.stu===id)).slice(-8).map(x=>{const v=sessScore(x.id,id);return{l:x.date,v:Math.max(0,v),t:v}}),5)}
+ <h2 style="margin-top:14px">PRACTICAL SKILLS (1–10)</h2><table>${D.skills.filter(k=>!k.arch&&k.cls===s.cls).map(k=>`<tr><td>${esc(k.name)}</td><td><b>${sk[k.id]??'—'}</b></td><td class="mut">${esc((D.skillNotes||{})[id+'_'+k.id]||'')}</td></tr>`).join('')||'<tr><td class="mut">No skills defined.</td></tr>'}</table>${D.skills.filter(k=>!k.arch&&k.cls===s.cls).map(k=>{const h=D.skillAssess.filter(x=>x.stu===id&&x.skill===k.id&&x.n===10);return h.length>1?`<div class="lb" style="margin-top:8px">${esc(k.name)} — progress</div>${line(h.map(x=>({l:new Date(x.ts).toISOString().slice(0,10),v:x.lvl})),110,10,'/10')}`:''}).join('')}</section></div>
+ ${A.length?`<section><h2>ALERTS</h2>${A.map(x=>`<div class="al ${x.k}"><span class="tg">${x.sev}</span> ${esc(x.m)}</div>`).join('')}</section>`:''}
+ <section><h2>DEVELOPMENT PLANS — only when needed</h2>${P.map(p=>`<div class="al"><b>${esc(p.title)}</b> <span class="lb">${esc(p.status)} · due ${esc(p.due||'—')}</span><br>${esc(p.problem||'')}<br><span class="mut">Target: ${esc(p.target||'—')}</span>
+ <div class="row noexp" style="margin-top:6px"><select onchange="plan('${p.id}','status',this.value)">${['Active','Completed','Closed'].map(o=>`<option ${p.status===o?'selected':''}>${o}</option>`).join('')}</select><input placeholder="Progress note" value="${esc(p.note||'')}" onchange="plan('${p.id}','note',this.value)"><button class="btn" onclick="del('plan','${p.id}',this)">Delete</button></div></div>`).join('')||'<p class="mut">No plan for this student.</p>'}
+ <div class="row noexp"><input id="pt" placeholder="Plan title"><input id="pp" placeholder="Problem"><input id="pg" placeholder="Measurable target"><input id="pd" type="date"><button class="btn pri" onclick="addPlan('${id}')">Add plan</button></div></section>`}
+V.Students=()=>{if(pid)return profile(pid);const val=s=>stuSort==='avg'?avg(results(s.id)):stuSort==='att'?attStats(s.id).pct:null;const S=D.students.filter(s=>s.cls===D.curClass&&s.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>{if(stuSort==='name')return stuCmp(a,b);return (val(b)??-1)-(val(a)??-1)});
+ return `${impP?impPrev():''}<section><h2>ADD STUDENT — type a name, press Enter</h2><div class="row"><input id="sn" data-enter="1" placeholder="Student name" onkeydown="if(event.key==='Enter'){event.preventDefault();addStu()}"><button class="btn pri" onclick="addStu()">Add</button></div>
+ <div class="row"><label class="lb">SMART IMPORT (Excel / CSV: names, attendance, quiz grades) <input type="file" accept=".xlsx,.xls,.csv,.txt" onchange="imp(this)"></label><button class="btn" onclick="expStu()">Export CSV (this class)</button><button class="btn" onclick="expAllStu()">Export all classes (file per class)</button>${DA('allstudents','Delete all students')}</div></section>
+ <section><h2>STUDENTS (${S.length})</h2><div class="row"><input data-enter="1" placeholder="Search" value="${esc(q)}" oninput="q=this.value;go(true)"><select aria-label="Sort" onchange="stuSort=this.value;go()">${[['name','Sort: list order'],['avg','Sort: quiz average'],['att','Sort: attendance']].map(o=>`<option value="${o[0]}" ${stuSort===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><button class="btn" onclick="resetOrd()">Reset order (A→Z)</button></div><p class="lb noexp">Drag the ⠿ handle to reorder (or focus it and press ↑ ↓). The order is used everywhere: attendance, quizzes, live and exports.</p><div class="wrap"><table><tr><th>#</th><th>NAME</th><th>AVG</th><th>TREND</th><th>ATT.</th><th></th></tr>
+ ${S.map((s,i)=>{const m=avg(results(s.id));return `<tr data-id="${s.id}"><td class="noexp" style="white-space:nowrap">${ordCtl(s,i,S.length)}</td><td>${nm(s)}</td><td>${m==null?'—':m.toFixed(1)+'%'}</td><td>${trend(s.id).c}</td><td>${(()=>{const p=attStats(s.id).pct;return p==null?'—':p.toFixed(0)+'%'})()}</td><td><button class="btn" onclick="del('student','${s.id}',this)">Delete</button></td></tr>`}).join('')||'<tr><td class="mut">No students yet.</td></tr>'}</table></div></section>`};
+let attSid=null,attMon=null,qOpen=null,stuSort='name',bkHide=false,impP=null,lvSess='all';
+V.Attendance=()=>{const ss=D.sessions.filter(x=>x.cls===D.curClass).sort((a,b)=>b.date.localeCompare(a.date));const ok=id=>id&&D.sessions.find(x=>x.id===id&&x.cls===D.curClass);const sid=ok(attSid)?attSid:ok(D.cur)?D.cur:(ss[0]||{}).id;const cs=D.sessions.find(x=>x.id===sid);const m=D.att[sid]||{};
+ const cb=(s,v)=>`<td style="text-align:center"><input type="checkbox" aria-label="${v} ${esc(s.name)}" ${m[s.id]===v||(v==='Present'&&m[s.id]==='Late')?'checked':''} onchange="setAtt(this,'${sid}','${s.id}','${v}')"></td>`;
+ return `<section><h2>NEW SESSION</h2><div class="row"><input type="date" id="sd" value="${today()}"><input id="st" data-enter="1" placeholder="Topic (optional)" onkeydown="if(event.key==='Enter')newSess()"><button class="btn pri" onclick="newSess()">New session</button></div></section>
+ ${cs?`<section><div class="row"><h2 style="margin:0;flex:1">Attendance — ${dt(cs.date)} ${esc(cs.topic||'')}</h2><button class="btn" onclick="allP('${sid}')">Mark everyone present</button><button class="btn" onclick="del('session','${sid}',this)">Delete day</button>${DA('allsessions','Delete all days')}</div>
+ <div class="wrap"><table style="max-width:560px"><tr><th>Name</th><th style="text-align:center">Absent</th><th style="text-align:center">Present</th></tr>${act().map(s=>`<tr><td>${esc(s.name)}</td>${cb(s,'Absent')}${cb(s,'Present')}</tr>`).join('')||'<tr><td class="mut" colspan="3">Add students first.</td></tr>'}</table></div></section>
+ <section><h2>Other days</h2>${(()=>{const mons=[...new Set(ss.map(x=>x.date.slice(0,7)))],mo=attMon&&mons.includes(attMon)?attMon:cs.date.slice(0,7);return `<div class="row"><select aria-label="Month" onchange="attMon=this.value;go()">${mons.map(m=>`<option ${m===mo?'selected':''}>${m}</option>`).join('')}</select><span class="lb">${ss.filter(x=>x.date.slice(0,7)===mo).length} days</span></div><div class="row" style="flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px">${ss.filter(x=>x.id!==sid&&x.date.slice(0,7)===mo).map(x=>`<button class="btn" style="flex:none" onclick="attSid='${x.id}';go()">${x.date.slice(8)} ${esc(x.topic||'')}</button>`).join('')||'<span class="mut">No other days this month.</span>'}</div>`})()}</section>`:'<section class="mut">Create a session to take attendance.</section>'}`};
+V.Quiz=()=>`<section><div class="row"><h2 style="margin:0;flex:1">NEW QUIZ</h2>${DA('allquiz','Delete all quizzes')}</div><div class="row"><input id="at" placeholder="Title"><input type="date" id="ad" value="${today()}"><input id="am" type="number" placeholder="Max score" style="width:110px" data-enter="1" onkeydown="if(event.key==='Enter')addAs()"><button class="btn pri" onclick="addAs()">Create</button></div></section>
+ ${D.assess.filter(a=>a.cls===D.curClass).slice().reverse().map((a,i)=>{const op=qOpen===null?i===0:qOpen===a.id;const v=Object.values(a.scores).filter(x=>x!==''&&x!=null).map(Number),sd=v.slice().sort((x,y)=>x-y),med=v.length?(sd[Math.floor((v.length-1)/2)]+sd[Math.ceil((v.length-1)/2)])/2:null,dis=a.closed?'disabled':'';
+ return `<section><div class="row"><button class="qt" aria-expanded="${op}" onclick="qOpen=${op}?'':'${a.id}';go()">${op?'▾':'▸'} ${esc(a.title)} <span class="lb">${dt(a.date)} · MAX ${a.max} · ${a.closed?'CLOSED':'OPEN'} · ${v.length} graded</span></button><button class="btn ${a.closed?'':'pri'}" onclick="togQ('${a.id}')">${a.closed?'Edit':'End'}</button><button class="btn" onclick="del('quiz','${a.id}',this)">Delete</button></div>
+ ${op?`<p class="lb">GRADED ${v.length}/${act().length} · MEAN ${v.length?(v.reduce((x,y)=>x+y,0)/v.length).toFixed(1):'—'} · MEDIAN ${med??'—'} · HIGH ${v.length?Math.max(...v):'—'} · LOW ${v.length?Math.min(...v):'—'} · PASS ${v.length?(100*v.filter(x=>100*x/a.max>=D.set.mid).length/v.length).toFixed(0)+'%':'—'}</p>
+ <div class="list">${act().map(s=>`<div class="li"><span class="n">${esc(s.name)}</span><input type="number" step="any" style="width:80px" ${dis} value="${a.scores[s.id]??''}" placeholder="—" onchange="setSc('${a.id}','${s.id}',this)"></div>`).join('')}</div>`:''}</section>`}).join('')||'<section class="mut">No quizzes yet. Blank scores stay missing, never zero.</section>'}`;
+V.Behavior=()=>{const S=act(),mx=+D.set.behMax||10;
+ return `<section><div class="row"><h2 style="margin:0;flex:1">BEHAVIOR</h2><label class="lb">Max <input type="number" min="1" style="width:80px" value="${mx}" onchange="D.set.behMax=+this.value||10;save();go()"></label></div><p class="lb">Blank = not recorded. Bonus given in the Bonus tab is added to the total.</p>
+ <div class="list" style="max-width:640px">${S.map(s=>`<div class="li"><span class="n">${esc(s.name)}</span><input type="number" step="any" style="width:80px" value="${behRaw(s.id)??''}" placeholder="—" aria-label="Behavior" onchange="setNum('behavior','${s.id}',this)"><span class="lb" style="min-width:100px;text-align:end">Total: <b id="tt${s.id}">${behTxt(s.id)}</b></span></div>`).join('')||'<span class="mut">Add students first.</span>'}</div></section>`};
+const bxg=(k,id,cls,lab)=>`<span class="bx ${cls}"><span class="bl">${lab}</span><button aria-label="${lab} −" onclick="bonStep('${k}','${id}',-1)">−</button><input type="number" step="any" id="bi_${k}_${id}" value="${nv((D[k]||{})[id])??''}" placeholder="0" aria-label="${lab}" onchange="setNum('${k}','${id}',this)"><button aria-label="${lab} +" onclick="bonStep('${k}','${id}',1)">+</button></span>`;
+V.Bonus=()=>{const S=act(),st=+D.set.bonStep||1;
+ return `<section><div class="row"><h2 style="margin:0;flex:1">BONUS</h2><label class="lb">Step <input type="number" step="any" min="0" style="width:80px" value="${st}" onchange="D.set.bonStep=+this.value||1;save()"></label></div><p class="lb">Give each student bonus on Behavior, on Quiz grade, or both. Use − / + or type a number.</p>
+ <div class="list" style="max-width:860px">${S.map(s=>`<div class="li bonrow"><span class="n">${esc(s.name)}</span>${bxg('bonusB',s.id,'bb','Behavior')}${bxg('bonusQ',s.id,'bq','Quiz grade')}<input class="bnote" placeholder="Reason / note" aria-label="Bonus note" style="flex:1;min-width:180px" value="${esc((D.bonusNote||{})[s.id]||'')}" onchange="setBonNote('${s.id}',this.value)"><span class="lb bot">Behavior: <b id="tb${s.id}">${behTxt(s.id)}</b> · Quiz: <b id="tq${s.id}">${qGradeTxt(s.id)}</b></span></div>`).join('')||'<span class="mut">Add students first.</span>'}</div></section>`};
+function refTot(id){const a=document.getElementById('tb'+id),b=document.getElementById('tq'+id),c=document.getElementById('tt'+id);if(a)a.textContent=behTxt(id);if(b)b.textContent=qGradeTxt(id);if(c)c.textContent=behTxt(id)}
+function setNum(k,id,el){D[k]=D[k]||{};const v=el.value.trim().replace(',','.');if(v===''){delete D[k][id]}else{const x=parseFloat(v);if(!isFinite(x)){alert('Enter a number');el.value=D[k][id]??'';return}D[k][id]=x}save();refTot(id)}
+function bonStep(k,id,d){const st=+D.set.bonStep||1;D[k]=D[k]||{};const v=Math.round(((nv(D[k][id])||0)+d*st)*100)/100;if(v===0)delete D[k][id];else D[k][id]=v;save();const i=document.getElementById('bi_'+k+'_'+id);if(i)i.value=v===0?'':v;refTot(id)}
+function setBonNote(id,v){D.bonusNote=D.bonusNote||{};v=v.trim();if(v)D.bonusNote[id]=v;else delete D.bonusNote[id];save()}
+V.Live=()=>{const cur=D.sessions.find(x=>x.id===D.cur&&x.cls===D.curClass);
+ if(!cur||cur.status==='Ended')return `<section><div class="row"><h2 style="margin:0;flex:1">LIVE CLASSROOM TRACKER</h2>${DA('allsessions','Delete all sessions')}</div><div class="row"><input type="date" id="sd" value="${today()}"><input id="st" data-enter="1" placeholder="Topic (optional)" onkeydown="if(event.key==='Enter')newSess()"><button class="btn pri" onclick="newSess()">Start session</button></div>
+ ${D.sessions.filter(x=>x.cls===D.curClass).reverse().map(s=>`<div class="li"><span class="n">${dt(s.date)} ${esc(s.topic||'')} <span class="lb">${s.status}</span></span><button class="btn" onclick="D.cur='${s.id}';save();go()">Open</button><button class="btn" onclick="del('session','${s.id}',this)">Delete</button></div>`).join('')||'<span class="mut">No sessions yet.</span>'}</section>`+(cur?logView(cur):'');
+ return `<section><div class="row"><b>SESSION ${cur.date} ${esc(cur.topic||'')}</b><input data-enter="1" placeholder="Search" value="${esc(q)}" oninput="q=this.value;go(true)"><button class="btn" onclick="undo()">Undo last</button><select aria-label="Columns" onchange="D.set.liveCols=this.value;save();go()">${['auto','1','2','3'].map(o=>`<option value="${o}" ${(D.set.liveCols||'auto')===o?'selected':''}>${o==='auto'?'Columns: auto':'Columns: '+o}</option>`).join('')}</select><button class="btn" onclick="endS()">End session</button></div>
+ <div class="lg" style="grid-template-columns:${!D.set.liveCols||D.set.liveCols==='auto'?'repeat(auto-fill,minmax(300px,1fr))':`repeat(${D.set.liveCols},1fr)`}">${act().filter(s=>s.name.toLowerCase().includes(q.toLowerCase())).map(s=>`<div class="li" id="st${s.id}"><span class="n">${esc(s.name)}</span><button class="pm minus" aria-label="Penalty for ${esc(s.name)}" onclick="ev('${s.id}',-1)">−</button><span class="sc" id="sc${s.id}">${sessScore(cur.id,s.id)}</span><button class="pm plus" aria-label="Bonus for ${esc(s.name)}" onclick="ev('${s.id}',1)">+</button></div>`).join('')||'<span class="mut">Add students first.</span>'}</div></section>`+logView(cur)};
+function logView(cur){return '';const L=D.events.filter(e=>e.sess===cur.id).slice().reverse();
+ return `<section id="log"><h2>EVENT LOG</h2><table>${L.slice(0,40).map(e=>`<tr class="${e.reversed?'mut':''}"><td class="mono">${new Date(e.ts).toLocaleTimeString('en-GB',{timeZone:'Africa/Cairo'})}</td><td>${esc((D.students.find(s=>s.id===e.stu)||{}).name)}</td><td>${e.pts>0?'Bonus +':'Penalty '}${e.pts}</td><td>${e.reversed?'reversed':''}</td></tr>`).join('')||'<tr><td class="mut">No events yet.</td></tr>'}</table></section>`}
+V['Practical Skills']=()=>{const sk=D.skills.filter(s=>!s.arch&&s.cls===D.curClass),sel=window.skSel&&sk.find(s=>s.id===window.skSel)?window.skSel:(sk[0]||{}).id,cs=sk.find(s=>s.id===sel);
+ return `<section><div class="row"><h2 style="margin:0;flex:1">ADD SKILL</h2>${DA('allskills','Delete all skills')}</div><div class="row"><input id="kn" data-enter="1" placeholder="Skill name" onkeydown="if(event.key==='Enter'){event.preventDefault();addSk()}"><button class="btn pri" onclick="addSk()">Add</button></div></section>
+ ${cs?`<section><div class="row"><h2 style="margin:0;flex:1">${esc(cs.name)} <span class="lb">rating 1–10 · blank = not assessed</span></h2><button class="btn" onclick="arSk('${cs.id}')">Archive</button><button class="btn" onclick="del('skill','${cs.id}',this)">Delete</button></div>
+ <div class="list" style="max-width:780px">${act().map(s=>`<div class="li"><span class="n" style="min-width:110px">${esc(s.name)}</span><input type="number" min="1" max="10" style="width:70px" placeholder="—" aria-label="Rating" value="${skillLatest(s.id)[sel]??''}" onchange="setSk('${s.id}','${sel}',this)"><input style="flex:2;min-width:140px" placeholder="Note" aria-label="Note" value="${esc((D.skillNotes||{})[s.id+'_'+sel]||'')}" onchange="setNote('${s.id}','${sel}',this.value)"></div>`).join('')}</div></section>
+ <section><h2>Other skills</h2><div class="row">${sk.filter(x=>x.id!==sel).map(x=>`<button class="btn" onclick="window.skSel='${x.id}';go()">${esc(x.name)}</button>`).join('')||'<span class="mut">No other skills.</span>'}</div></section>`:'<section class="mut">No skills yet. Add one above.</section>'}`};
+function liveRows(sc){const ids=new Set(D.sessions.filter(x=>x.cls===D.curClass&&(sc==='all'||x.id===sc)).map(x=>x.id));
+ return act().map(s=>{const E=live().filter(e=>e.stu===s.id&&ids.has(e.sess)),b=E.filter(e=>e.pts>0).reduce((a,e)=>a+e.pts,0),p=E.filter(e=>e.pts<0).reduce((a,e)=>a+e.pts,0);return{s,b,p,net:b+p,n:E.length}})}
+function liveBoard(){const ss=D.sessions.filter(x=>x.cls===D.curClass).sort((a,b)=>b.date.localeCompare(a.date));if(lvSess!=='all'&&!ss.find(x=>x.id===lvSess))lvSess='all';
+ const R=liveRows(lvSess).sort((a,b)=>b.net-a.net||a.s.name.localeCompare(b.s.name,'ar'));let rk=0,last=null;R.forEach((r,i)=>{if(r.net!==last){rk=i+1;last=r.net}r.rk=rk});
+ const I=R.filter(r=>r.n>0),N=R.filter(r=>r.n===0),tot=R.reduce((a,r)=>a+r.net,0),top=I[0],mx=Math.max(1,...I.map(r=>r.net));
+ return `<section><div class="row" style="margin:0"><h2 style="margin:0;flex:1">LIVE POINTS <span class="lb">(separate from quiz scores)</span></h2><select aria-label="Scope" onchange="lvSess=this.value;go()"><option value="all">All sessions</option>${ss.map(x=>`<option value="${x.id}" ${x.id===lvSess?'selected':''}>${dt(x.date)} ${esc(x.topic||'')}</option>`).join('')}</select></div></section>
+ <div class="stats"><div><div class="lb">TOP STUDENT</div><div style="font-size:20px;font-weight:800">${top?nm(top.s):'—'}</div><div class="lb">${top?top.net+' points':''}</div></div><div><div class="lb">CLASS NET POINTS</div><div class="big">${tot}</div></div><div><div class="lb">INTERACTING</div><div class="big">${I.length}/${R.length}</div></div><div><div class="lb">NO INTERACTION</div><div class="big">${N.length}</div></div></div>
+ <div class="ch"><section><h2>Top 10</h2>${bars(I.slice(0,10).map(r=>({l:r.s.name,v:Math.max(0,r.net),t:r.net,c:`openStu('${r.s.id}')`})),mx)}</section>
+ <section><h2>No interaction at all (${N.length})</h2>${N.map(r=>`<div class="li"><span class="n">${nm(r.s)}</span></div>`).join('')||'<span class="mut">Everyone has at least one event.</span>'}</section></div>
+ <section><h2>Full ranking</h2><div class="wrap"><table><tr><th>#</th><th>NAME</th><th>BONUS</th><th>PENALTY</th><th>NET</th></tr>${R.map(r=>`<tr><td>${r.n?r.rk:'—'}</td><td>${nm(r.s)}</td><td>${r.b}</td><td>${r.p}</td><td><b>${r.net}</b></td></tr>`).join('')||'<tr><td class="mut">No students.</td></tr>'}</table></div></section>`}
+V.Alerts=()=>{const A=alerts();window.alv=A;const I=A.map((a,i)=>[a,i]);
+ const row=([a,i])=>`<div class="al ${a.k}"><div class="row" style="margin:0 0 4px"><b>${nm(a.s)}</b> <span class="tg">${a.sev}</span>${a.st==='ack'?'<span class="tg">Acknowledged</span>':''}${a.st==='resolved'?'<span class="tg">Resolved</span>':''}<span style="flex:1"></span>${a.st==='new'?`<button class="btn" onclick="setAl(${i},'ack')">Acknowledge</button>`:''}${a.st==='resolved'?`<button class="btn" onclick="setAl(${i},'')">Reopen</button>`:`<button class="btn" onclick="setAl(${i},'resolved')">${a.k==='pos'?'Dismiss':'Resolve'}</button>`}</div>${esc(a.m)}</div>`;
+ const live_=x=>x[0].st!=='resolved',so={High:0,Medium:1},
+ pr=I.filter(x=>live_(x)&&x[0].k!=='pos').sort((x,y)=>(so[x[0].sev]??1)-(so[y[0].sev]??1)),im=I.filter(x=>live_(x)&&x[0].k==='pos'),rs=I.filter(x=>x[0].st==='resolved');
+ return `<section style="border-inline-start:8px solid var(--bad)"><h2>NEEDS ATTENTION (${pr.length})</h2>${pr.map(row).join('')||'<span class="mut">No problems right now.</span>'}</section>
+ <section style="border-inline-start:8px solid var(--good)"><h2>IMPROVEMENT (${im.length})</h2>${im.map(row).join('')||'<span class="mut">No improvements detected yet.</span>'}</section>${rs.length?`<section><h2>RESOLVED</h2>${rs.map(row).join('')}</section>`:''}`};
+V.Settings=()=>{const f=(k,l,h)=>`<label class="row"><span style="width:250px">${l}</span><input type="number" value="${D.set[k]}" onchange="D.set.${k}=+this.value;save()"><span class="lb">${h}</span></label>`;
+ return `<section><h2>ACCOUNT &amp; SYNC</h2>${SY.uid?`<p>Status: <b>${esc(syncLabel())}</b></p><p>Engineer code: <b class="mono">${engCode()}</b></p><div class="row"><button class="btn" onclick="syncNow()">Sync now</button></div><p class="lb">Open this page signed in on any phone or laptop and you get the same data. Each engineer who opens it with their own account has a separate private workspace.</p><p class="lb"><b>Add an engineer:</b> open this page's Share menu and invite their email as <b>Contributor</b>. Don't turn on a public link if they should sync. They sign in to claude.ai with that email on any phone or laptop and open the same link.</p>`:(STANDALONE?'<p>This version works without any account. Your data is stored on this device only. To move it to another phone or laptop, use ⬇ Backup here, then Restore on the other device.</p>':'<p>Sync is off. Open this page while signed in to claude.ai to keep your data on every device. Right now it is stored on this device only.</p>')}</section>
+ <section><h2>CLASSES</h2>${D.classes.map(c=>`<div class="li"><input value="${esc(c.name)}" style="flex:1" aria-label="Class name" onchange="renCls('${c.id}',this.value)">${D.classes.length>1?`<button class="btn" onclick="del('class','${c.id}',this)">Delete</button>`:''}</div>`).join('')}</section>
+ <section><h2>RULES</h2>${f('hi','High level from (%)','80 and above')}${f('mid','Medium level from (%)','also the pass mark')}${f('drop','Sudden-drop (points)','latest vs previous 3')}${f('low','Persistent-low (%)','average below this')}${f('minN','Minimum quizzes','for trend and alerts')}${f('bonus','Bonus value','per +')}${f('pen','Penalty value','per −, negative')}${f('absN','Consecutive absences','alert at')}${f('lowEng','Low engagement net avg','last 3 sessions')}</section>
+ <section><h2>DATA PROTECTION</h2><p>Storage status: <b>${PERSIST===true?'Protected (the browser promised not to clear it)':'Not guaranteed by the browser'}</b></p><p class="lb">Your data is saved twice on this device, in two separate browser stores. Safari on iPhone can still erase a website's data after about a week without opening it. To avoid that, add this page to the Home Screen and open it from there, or open the app at least once a week. Chrome and Edge keep the data unless the device is very low on space.</p><div class="row"><button class="btn" onclick="protectStorage().then(()=>go())">Request protection</button></div></section>
+ <section><h2>EXCEL</h2><div class="row"><button class="btn pri" onclick="exportXlsx()">Export to Excel now</button><label class="btn">Update my existing file<input type="file" accept=".xlsx" hidden onchange="mergeXlsx(this)"></label><button class="btn" onclick="linkFile()">Link a file (auto-save, Chrome/Edge on a laptop)</button></div><label class="row"><input type="checkbox" ${D.set.autoXls!==false?'checked':''} onchange="D.set.autoXls=this.checked;save()"> Also download the Excel file automatically when I end a session or a quiz</label><p class="lb">The class file has two sheets: "Class data" (each student with attendance and quiz grades) and "Dashboard" (class totals). For one student, open the profile and press Export Excel. "Update my existing file" refreshes only these two sheets inside your own workbook and keeps any other sheets you added.</p></section>
+ ${snapSec()}
+ <section><h2>BACKUP</h2><div class="row"><button class="btn" onclick="bak()">Download backup (JSON)</button><label class="lb">RESTORE <input type="file" accept=".json" onchange="rest(this)"></label><button class="btn" onclick="demo()">Load demo data</button><button class="btn" onclick="rmDemo()">Remove demo data</button></div><p class="lb">Data lives in this browser only. Download backups regularly.</p></section>`};
+// ---- actions ----
+const busy={};
+function ev(stu,sign){const cur=D.sessions.find(x=>x.id===D.cur);if(!cur||cur.status!=='Active')return;const k=stu+sign;if(busy[k]&&Date.now()-busy[k]<80)return;busy[k]=Date.now();
+ D.events.push({id:uid(),stu,sess:cur.id,pts:sign>0?D.set.bonus:D.set.pen,ts:Date.now(),reversed:false});save();
+ const el=document.getElementById('sc'+stu);if(el){el.textContent=sessScore(cur.id,stu);const r=document.getElementById('st'+stu);r.classList.add('flash');setTimeout(()=>r.classList.remove('flash'),250)}
+ const lg=document.getElementById('log');if(lg)lg.outerHTML=logView(cur)}
+function undo(){const cur=D.sessions.find(x=>x.id===D.cur),e=D.events.filter(x=>x.sess===cur.id&&!x.reversed).pop();if(!e)return;e.reversed=true;D.audit.push({ts:Date.now(),act:'undo',ev:e.id});save();go(true)}
+function newSess(){const s={id:uid(),date:document.getElementById('sd').value||today(),topic:document.getElementById('st').value,status:'Active',cls:D.curClass};D.sessions.push(s);D.cur=s.id;attSid=s.id;attMon=null;save();go()}
+function endS(){D.sessions.find(x=>x.id===D.cur).status='Ended';save();go();if(D.set.autoXls!==false)exportXlsx(true)}
+function addStu(){const n=sn.value.trim();if(!n)return;
+ const cl=D.students.filter(s=>s.cls===D.curClass),ns={id:uid(),name:n,code:nextCode(),cls:D.curClass,status:'Active'};if(cl.length&&cl.every(s=>s.ord!=null))ns.ord=Math.max(...cl.map(s=>s.ord))+1;D.students.push(ns);save();go();document.getElementById('sn').focus()}
+function togStu(id){const s=D.students.find(x=>x.id===id);s.status=s.status==='Active'?'Inactive':'Active';save();go()}
+function openStu(id){pid=id;tab='Students';go();window.scrollTo(0,0)}
+function setAtt(el,s,st,v){const box=el.closest('tr');if(el.checked)box.querySelectorAll('input').forEach(i=>{if(i!==el)i.checked=false});
+ D.att[s]=D.att[s]||{};const old=D.att[s][st];if(el.checked)D.att[s][st]=v;else delete D.att[s][st];D.audit.push({ts:Date.now(),act:'att',s,st,old,v:D.att[s][st]});save()}
+function allP(s){act().forEach(x=>{D.att[s]=D.att[s]||{};if(!D.att[s][x.id])D.att[s][x.id]='Present'});save();go()}
+function setNote(stu,skill,v){D.skillNotes=D.skillNotes||{};D.skillNotes[stu+'_'+skill]=v;save()}
+function addCls(){const n=cn.value.trim();if(!n)return;if(D.classes.some(c=>c.name.toLowerCase()===n.toLowerCase())){alert('Class name already exists');return}const c={id:uid(),name:n};D.classes.push(c);D.curClass=c.id;save();go();document.getElementById('cn').focus()}
+function fixData(){D.behavior=D.behavior||{};D.bonusB=D.bonusB||{};D.bonusQ=D.bonusQ||{};D.bonusNote=D.bonusNote||{};if(D.bonus&&!D.set.bv2){const m=D.set.bonusTo==='quiz'?D.bonusQ:D.bonusB;Object.keys(D.bonus).forEach(k=>{if(m[k]==null)m[k]=D.bonus[k]})}D.set.bv2=1;delete D.bonus;if(!D.set.xv2){D.set.xv2=1;D.set.autoXls=false}D.students.forEach(x=>delete x.photo);if(!D.classes.length){const c={id:uid(),name:'Class 1'};D.classes.push(c);D.curClass=c.id}
+ if(!D.classes.find(c=>c.id===D.curClass))D.curClass=D.classes[0].id;
+ [D.students,D.sessions,D.assess,D.skills].forEach(a=>a.forEach(x=>{if(!x.cls||!D.classes.find(c=>c.id===x.cls))x.cls=D.curClass}))}
+function renCls(id,v){v=v.trim();if(v){D.classes.find(c=>c.id===id).name=v;save();go()}}
+function globalUndo(){if(!undoStack.length)return;const snap=undoStack.pop();D=JSON.parse(snap);fixData();lastSnap=JSON.stringify(D);save();go()}
+function setAl(i,st){const a=window.alv[i];D.alertSt=D.alertSt||{};if(st)D.alertSt[a.id]={st,sig:a.m};else delete D.alertSt[a.id];save();go()}
+function RH0(title,body){return `<!DOCTYPE html><html dir="${D.set.lang==='ar'?'rtl':'ltr'}"><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font:14px/1.5 "Segoe UI",Tahoma,sans-serif;max-width:800px;margin:24px auto;padding:0 16px;color:#111}h1{margin:0 0 4px}h2{font-size:15px;border-bottom:2px solid #111;padding-bottom:3px;margin-top:22px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ccc;padding:4px 6px;text-align:start}.k{display:inline-block;margin-inline-end:26px}.k b{display:block;font-size:22px}@media print{.np{display:none}}</style></head><body><button class="np" onclick="print()">Print / Save as PDF</button>${body}<p style="color:#666;font-size:12px">Made by mostafa saeed · ${dt(today())}</p></body></html>`}
+function RH(title,body){const h=RH0(title,body);return D.set.lang==='ar'?trHTML(h):h}
+function stuReport(id){const s=D.students.find(x=>x.id===id),r=results(id),m=avg(r),tr=trend(id),a=attStats(id),sk=skillLatest(id),net=live().filter(e=>e.stu===id).reduce((x,e)=>x+e.pts,0),P=D.plans.filter(p=>p.stu===id),c=D.classes.find(x=>x.id===s.cls);
+ const body=`<h1>${esc(s.name)}</h1><p>${esc(c?c.name:'')}</p><div><span class="k">Quiz average<b>${m==null?'—':m.toFixed(1)+'%'}</b></span><span class="k">Level<b>${m==null?'—':tier(m)[0]}</b></span><span class="k">Trend<b>${tr.c}</b></span><span class="k">Attendance<b>${a.pct==null?'—':a.pct.toFixed(0)+'%'}</b></span><span class="k">Live points (net)<b>${net}</b></span><span class="k">Behavior<b>${behTxt(id)}</b></span></div>
+ <h2>Quizzes</h2><table><tr><th>Quiz</th><th>Date</th><th>Score</th><th>%</th></tr>${r.map(x=>`<tr><td>${esc(x.t)}</td><td>${dt(x.date)}</td><td>${x.v}/${x.max}</td><td>${x.p.toFixed(0)}%</td></tr>`).join('')||'<tr><td>No grades</td></tr>'}</table>
+ <h2>Practical skills (1–10)</h2><table>${D.skills.filter(k=>!k.arch&&k.cls===s.cls).map(k=>`<tr><td>${esc(k.name)}</td><td>${sk[k.id]??'—'}</td><td>${esc((D.skillNotes||{})[id+'_'+k.id]||'')}</td></tr>`).join('')||'<tr><td>None</td></tr>'}</table>
+ <h2>Alerts</h2>${alerts(id).filter(x=>x.st!=='resolved').map(x=>`<p>• ${esc(x.m)}</p>`).join('')||'<p>None</p>'}
+ <h2>Development plans</h2>${P.map(p=>`<p><b>${esc(p.title)}</b> (${esc(p.status)}, due ${esc(p.due||'—')})<br>${esc(p.problem||'')}<br>Target: ${esc(p.target||'—')}<br>${esc(p.note||'')}</p>`).join('')||'<p>None</p>'}${s.notes?`<h2>Instructor notes</h2><p>${esc(s.notes)}</p>`:''}`;
+ dl('report-'+s.name.replace(/[^\w\u0600-\u06FF]+/g,'_')+'.html',RH(s.name,body),'text/html')}
+function clsReport(){const S=act(),c=D.classes.find(x=>x.id===D.curClass),rows=S.map(s=>({s,m:avg(results(s.id)),tr:trend(s.id),a:attStats(s.id),net:live().filter(e=>e.stu===s.id).reduce((x,e)=>x+e.pts,0)})).sort((x,y)=>(y.m??-1)-(x.m??-1)),tc={High:0,Medium:0,Low:0};rows.forEach(x=>{if(x.m!=null)tc[tier(x.m)[0]]++});
+ const body=`<h1>${esc(c?c.name:'Class')} — class report</h1><p>${today()}</p><div><span class="k">Students<b>${S.length}</b></span><span class="k">High<b>${tc.High}</b></span><span class="k">Medium<b>${tc.Medium}</b></span><span class="k">Low<b>${tc.Low}</b></span></div>
+ <h2>Students</h2><table><tr><th>#</th><th>Name</th><th>Avg</th><th>Level</th><th>Trend</th><th>Attendance</th><th>Live points</th></tr>${rows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.s.name)}</td><td>${x.m==null?'—':x.m.toFixed(1)+'%'}</td><td>${x.m==null?'—':tier(x.m)[0]}</td><td>${x.tr.c}</td><td>${x.a.pct==null?'—':x.a.pct.toFixed(0)+'%'}</td><td>${x.net}</td></tr>`).join('')}</table>
+ <h2>Alerts</h2>${alerts().filter(a=>a.st!=='resolved'&&a.k!=='pos').map(a=>`<p>• <b>${esc(a.s.name)}</b>: ${esc(a.m)}</p>`).join('')||'<p>None</p>'}`;
+ dl('class-report-'+today()+'.html',RH('Class report',body),'text/html')}
+function renStu(id,v){v=v.trim();if(v){D.students.find(x=>x.id===id).name=v;save();go()}}
+function setNoteS(id,v){D.students.find(x=>x.id===id).notes=v;save()}
+function renderBk(){const el=document.getElementById('bkbar');if(!el)return;const age=D.lastBackup?(Date.now()-D.lastBackup)/864e5:null;
+ if(!D.students.length||bkHide||(age!==null&&age<3)){el.innerHTML='';return}
+ el.innerHTML=`<div class="abar bk" role="status"><div style="flex:1">${age===null?'No backup yet.':'Last backup '+Math.floor(age)+' days ago.'} Your data lives only in this browser, so download a backup file.</div><button class="btn pri" onclick="bak()">Download backup</button><button class="btn" onclick="bkHide=true;renderBk()">Later</button></div>`}
+const XT='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const wbBlob=wb=>new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:XT});
+const xlsxBlob=()=>wbBlob(buildXlsx());
+const pc=v=>v==null?'':Math.round(v*10)/10,slab=x=>x.date+(x.topic?' '+x.topic:''),cname=id=>(D.classes.find(c=>c.id===id)||{}).name||'',okv=v=>v!==undefined&&v!==''&&v!==null;
+const addSheet=(wb,n,rows,w)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=w||Array.from({length:Math.max(1,...rows.map(r=>r.length))},(_,i)=>({wch:i===1?26:14}));XLSX.utils.book_append_sheet(wb,ws,n)};
+// shared look for the Excel exports (same design as the student sheet)
+function xk(){const BD={style:'thin',color:{rgb:'B7C2BC'}},BR={top:BD,bottom:BD,left:BD,right:BD},fl=c=>({patternType:'solid',fgColor:{rgb:c}}),AL='left',
+ ST={
+  title:{font:{bold:true,sz:20,color:{rgb:'FFFFFF'}},fill:fl('193129'),alignment:{horizontal:'center',vertical:'center'}},
+  sec:{font:{bold:true,sz:12,color:{rgb:'193129'}},fill:fl('CFE3D6'),alignment:{horizontal:AL,vertical:'center'},border:BR},
+  th:{font:{bold:true,color:{rgb:'FFFFFF'}},fill:fl('193129'),alignment:{horizontal:'center',vertical:'center',wrapText:true},border:BR},
+  lab:{font:{bold:true},fill:fl('EEF3F0'),alignment:{horizontal:AL,vertical:'center',wrapText:true},border:BR},
+  val:{alignment:{horizontal:AL,vertical:'center',wrapText:true},border:BR},
+  cen:{alignment:{horizontal:'center',vertical:'center',wrapText:true},border:BR}
+ };
+ return{ST,fl,
+  tf:p=>p==null?null:p>=D.set.hi?'C6EFCE':p>=D.set.mid?'FFEB9C':'FFC7CE',
+  cs:(base,fill,bold)=>Object.assign({},base,fill?{fill:fl(fill)}:{},bold?{font:Object.assign({},base.font||{},{bold:true})}:{}),
+  C:(v,sty,z)=>{const o={v:v==null?'':v,t:typeof v==='number'?'n':'s'};if(sty)o.s=sty;if(z&&typeof v==='number'){o.z=z;if(o.s)o.s=Object.assign({},o.s,{numFmt:z})}return o},
+  PCT:'0.0"%"',PCT0:'0"%"',
+  span:(v,sty,n)=>[{v:v==null?'':v,t:typeof v==='number'?'n':'s',s:sty}].concat(Array.from({length:n-1},()=>({v:'',t:'s',s:sty}))),
+  len:v=>String(v==null?'':v).length,
+  mkws:(rows,w,mg,hs)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=w.map(x=>({wch:x}));if(mg&&mg.length)ws['!merges']=mg;if(hs)ws['!rows']=rows.map((_,i)=>hs[i]||{});return ws}}}
+function buildXlsx(){const wb=XLSX.utils.book_new(),S=act(),ss=D.sessions.filter(x=>x.cls===D.curClass).sort((a,b)=>a.date.localeCompare(b.date)),Q=D.assess.filter(a=>a.cls===D.curClass).sort((a,b)=>a.date.localeCompare(b.date)),R=liveRows('all');
+ const{ST,tf,cs,C,PCT,PCT0,span,len,mkws}=xk();
+ // ---- sheet 1: Class data (same columns as before) ----
+ // behavior columns are written only when someone has a behavior grade or bonus; bonus is already added into the grades
+ const OPT=!S.some(s=>behTotal(s.id)!=null)?[]:[{h:'Behavior',w:12,f:s=>C(behTotal(s.id)==null?'':pc(behTotal(s.id)),ST.cen)},{h:'Behavior %',w:12,f:s=>C(behPct(s.id)==null?'':Math.round(behPct(s.id)),ST.cen,PCT0)}];
+ const head=['#','Name'].concat(ss.map(slab),['Present','Absent','Attendance %'],Q.map(a=>a.title+' (/'+a.max+')'),['Quiz avg %','Live points'],OPT.map(o=>o.h));
+ const body=S.map((s,i)=>{const m=ss.map(x=>{const v=(D.att[x.id]||{})[s.id]||'';return v==='Late'?'Present':v==='Excused'?'':v}),a=attStats(s.id),r=R.find(x=>x.s.id===s.id)||{net:0},qa=qGrade(s.id);
+  return[C(i+1,ST.cen),C(s.name,ST.val)].concat(m.map(v=>C(v,cs(ST.cen,v==='Present'?'C6EFCE':v==='Absent'?'FFC7CE':null))),
+   [C(m.filter(v=>v==='Present').length,ST.cen),C(m.filter(v=>v==='Absent').length,ST.cen),C(a.pct==null?'':Math.round(a.pct),ST.cen,PCT0)],
+   Q.map(q=>{const v=q.scores[s.id],ok=okv(v);return C(ok?v:'',cs(ST.cen,ok?tf(100*v/q.max):null))}),
+   [C(qa==null?'':pc(qa),cs(ST.cen,tf(qa),true),PCT),C(r.net,ST.cen)],OPT.map(o=>o.f(s)))});
+ const nc=head.length,w0=[5,26].concat(ss.map(()=>14),[10,10,14],Q.map(()=>16),[14,14],OPT.map(o=>o.w)),ws0=mkws([head.map(x=>C(x,ST.th))].concat(body),w0,null,{0:{hpt:44}});
+ ws0['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:Math.max(1,body.length),c:nc-1}})};XLSX.utils.book_append_sheet(wb,ws0,'Class data');
+ // ---- sheet 2: Dashboard (same rows and order as before) ----
+ const W=S.map(s=>({s,m:qGrade(s.id)})),G=W.filter(x=>x.m!=null).sort((a,b)=>b.m-a.m),all=Q.flatMap(q=>S.map(s=>q.scores[s.id]).filter(okv).map(v=>100*v/q.max)),at=S.map(s=>attStats(s.id).pct).filter(x=>x!=null),tc={High:0,Medium:0,Low:0};G.forEach(x=>tc[tier(x.m)[0]]++);
+ const NC=5,rows=[],mg=[],hs={},Rw=(cells,h)=>{rows.push(cells);if(h)hs[rows.length-1]={hpt:h}},M=(c,n)=>mg.push({s:{r:rows.length-1,c},e:{r:rows.length-1,c:c+n-1}}),
+ B=()=>Rw([C('')]),sec=t=>{Rw(span(t,ST.sec,NC),22);M(0,NC)},kv=(k,v,z)=>Rw([C(k,ST.lab),C(v,ST.val,z)],20),
+ th=(...h)=>Rw(h.map(x=>C(x,ST.th)),24),
+ lv={High:'C6EFCE',Medium:'FFEB9C',Low:'FFC7CE'};
+ Rw(span('CLASS DASHBOARD',ST.title,NC),36);M(0,NC);kv('Class',cname(D.curClass));kv('Date',today());B();
+ kv('Students',S.length);kv('Quizzes',Q.length);kv('Sessions',ss.length);kv('Class quiz average %',all.length?pc(all.reduce((a,b)=>a+b,0)/all.length):'',PCT);kv('Attendance %',at.length?Math.round(at.reduce((a,b)=>a+b,0)/at.length):'',PCT0);B();
+ sec('PERFORMANCE LEVELS');th('Level','Students');
+ ['High','Medium','Low'].forEach(k=>Rw([C(k,cs(ST.lab,lv[k])),C(tc[k],ST.cen)]));Rw([C('Not graded',ST.lab),C(S.length-G.length,ST.cen)]);B();
+ const qr=[['Quiz','Date','Max','Graded','Average %','Highest %','Lowest %','Pass rate %'].map(x=>C(x,ST.th))];
+ Q.forEach(q=>{const p=S.map(s=>q.scores[s.id]).filter(okv).map(v=>100*v/q.max),av=p.length?pc(p.reduce((a,b)=>a+b,0)/p.length):'',hi=p.length?pc(Math.max(...p)):'',lo=p.length?pc(Math.min(...p)):'';
+  qr.push([C(q.title,ST.val),C(q.date,ST.cen),C(q.max,ST.cen),C(p.length,ST.cen),C(av,cs(ST.cen,tf(av===''?null:av)),PCT),C(hi,cs(ST.cen,tf(hi===''?null:hi)),PCT),C(lo,cs(ST.cen,tf(lo===''?null:lo)),PCT),C(p.length?Math.round(100*p.filter(x=>x>=D.set.mid).length/p.length):'',ST.cen,PCT0)])});
+ sec('ATTENDANCE PER DAY');th('Day','Present','Absent','Not recorded','Present %');
+ ss.forEach(x=>{const m=D.att[x.id]||{},p=S.filter(s=>m[s.id]==='Present'||m[s.id]==='Late').length,ab=S.filter(s=>m[s.id]==='Absent').length;
+  Rw([C(slab(x),ST.val),C(p,cs(ST.cen,p?'C6EFCE':null)),C(ab,cs(ST.cen,ab?'FFC7CE':null)),C(S.length-p-ab,ST.cen),C(p+ab?Math.round(100*p/(p+ab)):'',ST.cen,PCT0)])});B();
+ sec('TOP 5 (quiz average)');th('#','Name','Average %');G.slice(0,5).forEach((x,i)=>Rw([C(i+1,ST.cen),C(x.s.name,ST.val),C(pc(x.m),cs(ST.cen,tf(x.m)),PCT)]));B();
+ sec('BOTTOM 5 (quiz average)');th('#','Name','Average %');G.slice(-5).reverse().forEach((x,i)=>Rw([C(i+1,ST.cen),C(x.s.name,ST.val),C(pc(x.m),cs(ST.cen,tf(x.m)),PCT)]));B();
+ sec('NEEDS ATTENTION');alerts().filter(a=>a.k!=='pos'&&a.st!=='resolved').forEach(a=>{Rw([C(a.s.name,ST.val)].concat(span(a.m,ST.val,NC-1)),Math.max(20,16*Math.ceil(len(a.m)/80)));M(1,NC-1)});B();
+ const L2=R.filter(r=>r.n>0).sort((a,b)=>b.net-a.net);sec('LIVE POINTS (separate from quiz scores)');th('#','Name','Bonus','Penalty','Net');
+ L2.slice(0,5).forEach((r,i)=>Rw([C(i+1,ST.cen),C(r.s.name,ST.val),C(r.b,ST.cen),C(r.p,ST.cen),C(r.net,ST.cen)]));
+ const ni=R.filter(r=>r.n===0).map(r=>r.s.name).join(', ');Rw([C('No interaction',ST.lab)].concat(span(ni,ST.val,NC-1)),Math.max(20,16*Math.ceil(len(ni)/80)));M(1,NC-1);
+ XLSX.utils.book_append_sheet(wb,mkws(rows,[28,26,14,14,14],mg,hs),'Dashboard');
+ if(Q.length)XLSX.utils.book_append_sheet(wb,mkws(qr,[30,14,8,10,12,12,12,14],null,{0:{hpt:30}}),'Quizzes');return wb}
+// ---- student Excel: organised + styled (uses xlsx-js-style when it loads; falls back to plain cells otherwise) ----
+let xsTried=false;
+async function loadStyledXlsx(){if(xsTried)return;xsTried=true;await new Promise(r=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js';s.onload=r;s.onerror=r;document.head.appendChild(s)})}
+function buildStuXlsx(id){const wb=XLSX.utils.book_new(),s=D.students.find(x=>x.id===id),ss=D.sessions.filter(x=>x.cls===s.cls).sort((a,b)=>a.date.localeCompare(b.date)),Q=D.assess.filter(a=>a.cls===s.cls).sort((a,b)=>a.date.localeCompare(b.date)),
+ r=results(id),m=qGrade(id),tr=trend(id),a=attStats(id),sk=skillLatest(id),R0=liveRows('all'),me=R0.find(x=>x.s.id===id)||{b:0,p:0,net:0,n:0},
+ G=act().map(x=>({x,m:qGrade(x.id)})).filter(x=>x.m!=null).sort((p,q)=>q.m-p.m),rk=G.filter(x=>x.m>(m??-1)).length+1,lr=R0.filter(x=>x.net>me.net).length+1;
+ const ARB=D.set.lang==='ar',L=(e,x)=>ARB?x:e,
+ VV={Present:'حاضر',Absent:'غائب',Excused:'بعذر','Not Recorded':'غير مسجل',High:'مرتفع',Medium:'متوسط',Low:'منخفض',Improving:'في تحسن',Declining:'في تراجع',Stable:'مستقر','Insufficient Data':'بيانات غير كافية',Active:'جاري',Positive:'إيجابي'},
+ tv=x=>ARB&&VV[x]?VV[x]:x,AL=ARB?'right':'left',
+ BD={style:'thin',color:{rgb:'B7C2BC'}},BR={top:BD,bottom:BD,left:BD,right:BD},
+ fl=c=>({patternType:'solid',fgColor:{rgb:c}}),
+ ST={
+  title:{font:{bold:true,sz:20,color:{rgb:'FFFFFF'}},fill:fl('193129'),alignment:{horizontal:'center',vertical:'center'}},
+  sub:{font:{sz:11,color:{rgb:'FFFFFF'}},fill:fl('2F5D4B'),alignment:{horizontal:'center',vertical:'center'}},
+  sec:{font:{bold:true,sz:12,color:{rgb:'193129'}},fill:fl('CFE3D6'),alignment:{horizontal:AL,vertical:'center'},border:BR},
+  th:{font:{bold:true,color:{rgb:'FFFFFF'}},fill:fl('193129'),alignment:{horizontal:'center',vertical:'center',wrapText:true},border:BR},
+  lab:{font:{bold:true},fill:fl('EEF3F0'),alignment:{horizontal:AL,vertical:'center',wrapText:true},border:BR},
+  val:{alignment:{horizontal:AL,vertical:'center',wrapText:true},border:BR},
+  cen:{alignment:{horizontal:'center',vertical:'center',wrapText:true},border:BR},
+  kl:{font:{bold:true,sz:10,color:{rgb:'4A5A52'}},fill:fl('EEF3F0'),alignment:{horizontal:'center',vertical:'center',wrapText:true},border:BR},
+  kv:{font:{bold:true,sz:16},alignment:{horizontal:'center',vertical:'center'},border:BR}
+ },
+ tf=p=>p==null?null:p>=D.set.hi?'C6EFCE':p>=D.set.mid?'FFEB9C':'FFC7CE',
+ cs=(base,fill,bold)=>Object.assign({},base,fill?{fill:fl(fill)}:{},bold?{font:Object.assign({},base.font||{},{bold:true})}:{}),
+ C=(v,sty,z)=>{const o={v:v==null?'':v,t:typeof v==='number'?'n':'s'};if(sty)o.s=sty;if(z&&typeof v==='number'){o.z=z;if(o.s)o.s=Object.assign({},o.s,{numFmt:z})}return o},
+ PCT='0.0"%"',
+ DT=d=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(d||'');return m?C(Date.UTC(+m[1],+m[2]-1,+m[3])/864e5+25569,ST.cen,'yyyy-mm-dd'):C(d||'',ST.cen)},
+ span=(v,sty,n,z)=>[C(v,sty,z)].concat(Array.from({length:n-1},()=>C('',sty))),
+ len=v=>String(v==null?'':v).length,
+ mkws=(rows,w,mg,hs)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=w.map(x=>({wch:x}));if(mg&&mg.length)ws['!merges']=mg;if(hs)ws['!rows']=rows.map((_,i)=>hs[i]||{});return ws};
+ const NC=5,W1=[28,22,22,22,34],rows=[],mg=[],hs={};
+ const R=(cells,h)=>{rows.push(cells);if(h)hs[rows.length-1]={hpt:h}},M=(c,n)=>mg.push({s:{r:rows.length-1,c},e:{r:rows.length-1,c:c+n-1}}),
+ blank=()=>R([C('')]),
+ sec=t=>{blank();R(span(t,ST.sec,NC),22);M(0,NC)},
+ kv=(k,v,z,fill)=>{R([C(k,ST.lab)].concat(span(v,fill?cs(ST.val,fill):ST.val,NC-1,z)),20);M(1,NC-1)};
+ // title block
+ R(span(s.name,ST.title,NC),36);M(0,NC);
+ R(span(L('Student dashboard','لوحة بيانات الطالب')+'  ·  '+cname(s.cls),ST.sub,NC),20);M(0,NC);
+ // key numbers (cards)
+ sec(L('KEY NUMBERS','الملخص السريع'));
+ const trf={Improving:'C6EFCE',Declining:'FFC7CE',Stable:'FFEB9C'}[tr.c]||null;
+ R([L('Quiz average','متوسط الكويزات'),L('Level','المستوى'),L('Trend','الاتجاه'),L('Attendance','نسبة الحضور'),L('Rank in class','الترتيب في الفصل')].map(x=>C(x,ST.kl)),24);
+ R([C(m==null?'—':pc(m),cs(ST.kv,tf(m)),PCT),C(m==null?'—':tv(tier(m)[0]),cs(ST.kv,tf(m))),C(tv(tr.c),cs(ST.kv,trf)),C(a.pct==null?'—':pc(a.pct),ST.kv,PCT),C(m==null?'—':rk+' / '+G.length,ST.kv)],32);
+{const bt=behTotal(id),bp=behPct(id);if(bt!=null){sec(L('BEHAVIOR','السلوك'));kv(L('Behavior','السلوك'),pc(bt));kv(L('Behavior %','نسبة السلوك'),pc(bp),PCT)}}
+ // student info
+ sec(L('STUDENT INFO','بيانات الطالب'));
+ kv(L('Name','الاسم'),s.name);kv(L('Student ID','رقم الطالب'),s.sid||'—');kv(L('Record code','كود السجل'),s.code||'—');kv(L('Class','الفصل'),cname(s.cls));kv(L('Group','المجموعة'),s.grp||'—');
+ {const dc=DT(today());dc.s=Object.assign({},ST.val,{numFmt:'yyyy-mm-dd'});R([C(L('Report date','تاريخ التقرير'),ST.lab),dc].concat(Array.from({length:NC-2},()=>C('',ST.val))),20);M(1,NC-1)}
+ // quizzes summary line
+ kv(L('Quizzes graded','الكويزات المصححة'),r.length+' / '+Q.length);
+ // all quiz grades
+ sec(L('QUIZ GRADES','درجات الكويزات'));
+ R([L('Quiz','الكويز'),L('Date','التاريخ'),L('Score','الدرجة'),L('Max','من'),'%'].map(x=>C(x,ST.th)),22);
+ if(!Q.length){R(span(L('No quizzes yet','لا توجد كويزات بعد'),ST.val,NC),20);M(0,NC)}
+ Q.forEach(q=>{const v=q.scores[id],ok=okv(v),p=ok?100*v/q.max:null;R([C(q.title,ST.val),DT(q.date),C(ok?v:'—',ST.cen),C(q.max,ST.cen),C(ok?pc(p):'—',cs(ST.cen,tf(p),true),PCT)],20)});
+ // attendance
+ const exc=ss.filter(x=>(D.att[x.id]||{})[id]==='Excused').length;
+ sec(L('ATTENDANCE','الحضور'));
+ kv(L('Recorded sessions','الحصص المسجلة'),a.tot);kv(L('Present','حاضر'),a.tot-a.ab);kv(L('Absent','غائب'),a.ab,null,a.ab?'FFC7CE':null);kv(L('Excused (not counted)','بعذر (غير محسوب)'),exc);kv(L('Not recorded (not counted)','غير مسجل (غير محسوب)'),ss.length-a.tot-exc);kv(L('Attendance % (recorded sessions only)','نسبة الحضور % (الحصص المسجلة فقط)'),a.pct==null?'—':pc(a.pct),PCT);
+ // live points
+ sec(L('LIVE POINTS (separate from quiz scores)','نقاط المتابعة المباشرة (منفصلة عن الكويزات)'));
+ kv(L('Net','الصافي'),me.net);kv(L('Bonus','المكافآت'),me.b);kv(L('Penalty','الخصومات'),me.p);kv(L('Rank in class','الترتيب في الفصل'),me.n?lr+' / '+R0.length:L('No interaction yet','لا توجد مشاركات بعد'));
+ // practical skills
+ sec(L('PRACTICAL SKILLS (1-10)','المهارات العملية (من 10)'));
+ R([C(L('Skill','المهارة'),ST.th),C(L('Rating','التقييم'),ST.th)].concat(span(L('Note','ملاحظة'),ST.th,3)),22);M(2,3);
+ const SK=D.skills.filter(k=>!k.arch&&k.cls===s.cls);
+ if(!SK.length){R(span(L('No skills defined for this class','لا توجد مهارات معرّفة لهذا الفصل'),ST.val,NC),20);M(0,NC)}
+ SK.forEach(k=>{const v=sk[k.id],nt=(D.skillNotes||{})[id+'_'+k.id]||'',f=v==null?null:v>=8?'C6EFCE':v>=5?'FFEB9C':'FFC7CE';
+  R([C(k.name,ST.val),C(v==null?'—':v,cs(ST.cen,f,true))].concat(span(nt,ST.val,3)),Math.max(20,16*Math.ceil(len(nt)/55)));M(2,3)});
+ // alerts
+ sec(L('ALERTS','التنبيهات'));
+ const AL2=alerts(id).filter(x=>x.st!=='resolved');
+ if(!AL2.length){R(span(L('No open alerts','لا توجد تنبيهات مفتوحة'),ST.val,NC),20);M(0,NC)}
+ else{R([C(L('Severity','الأهمية'),ST.th)].concat(span(L('Alert','التنبيه'),ST.th,NC-1)),22);M(1,NC-1);
+  AL2.forEach(x=>{const f=x.sev==='High'?'FFC7CE':x.sev==='Positive'?'C6EFCE':'FFEB9C';R([C(tv(x.sev),cs(ST.cen,f,true))].concat(span(ARB?trs(x.m):x.m,ST.val,NC-1)),Math.max(20,16*Math.ceil(len(x.m)/80)));M(1,NC-1)})}
+ // development plans
+ sec(L('DEVELOPMENT PLANS','خطط التطوير'));
+ const PL=D.plans.filter(p=>p.stu===id);
+ if(!PL.length){R(span(L('No plans yet','لا توجد خطط بعد'),ST.val,NC),20);M(0,NC)}
+ else{R([L('Title','العنوان'),L('Status','الحالة'),L('Due','الموعد'),L('Target','الهدف'),L('Note','ملاحظة')].map(x=>C(x,ST.th)),22);
+  PL.forEach(p=>R([C(p.title,ST.val),C(tv(p.status),ST.cen),DT(p.due),C(p.target||'',ST.val),C(p.note||'',ST.val)],Math.max(20,16*Math.max(Math.ceil(len(p.title)/26),Math.ceil(len(p.target)/24),Math.ceil(len(p.note)/32)))))}
+ // notes
+ if(s.notes){sec(L('NOTES','ملاحظات'));R(span(s.notes,ST.val,NC),Math.max(24,16*Math.ceil(len(s.notes)/120)));M(0,NC)}
+ const w1=mkws(rows,W1,mg,hs);XLSX.utils.book_append_sheet(wb,w1,L('Summary','الملخص'));
+ // attendance sheet
+ const AT=[[L('Date','التاريخ'),L('Topic','الموضوع'),L('Status','الحالة')].map(x=>C(x,ST.th))];
+ ss.forEach(x=>{const v=(D.att[x.id]||{})[id]||'',k=v==='Late'?'Present':v==='Excused'?'Excused':v||'Not Recorded',f={Present:'C6EFCE',Absent:'FFC7CE',Excused:'D9D9D9','Not Recorded':null}[k];
+  AT.push([DT(x.date),C(x.topic||'',ST.val),C(tv(k),cs(ST.cen,f))])});
+ const wa=mkws(AT,[14,34,16]);wa['!autofilter']={ref:'A1:C'+AT.length};XLSX.utils.book_append_sheet(wb,wa,L('Attendance','الحضور'));
+ // quizzes sheet
+ const QZ=[[L('Quiz','الكويز'),L('Date','التاريخ'),L('Score','الدرجة'),L('Max','من'),'%',L('Level','المستوى')].map(x=>C(x,ST.th))];
+ Q.forEach(q=>{const v=q.scores[id],ok=okv(v),p=ok?100*v/q.max:null,f=tf(p);
+  QZ.push([C(q.title,ST.val),DT(q.date),C(ok?v:'—',ST.cen),C(q.max,ST.cen),C(ok?pc(p):'—',cs(ST.cen,f),PCT),C(ok?tv(tier(p)[0]):L('Not graded','لم يُصحح'),cs(ST.cen,f))])});
+ QZ.push([C(L('Average','المتوسط'),cs(ST.lab,null,true)),C('',ST.lab),C('',ST.lab),C('',ST.lab),C(m==null?'—':pc(m),cs(ST.kv,tf(m),true),PCT),C(m==null?'—':tv(tier(m)[0]),cs(ST.cen,tf(m),true))]);
+ const wq=mkws(QZ,[30,14,10,10,12,16]);wq['!autofilter']={ref:'A1:F'+(QZ.length-1)};XLSX.utils.book_append_sheet(wb,wq,L('Quizzes','الكويزات'));
+ // skills sheet
+ const SS=[[L('Skill','المهارة'),L('Latest rating (1-10)','آخر تقييم (من 10)'),L('Note','ملاحظة')].map(x=>C(x,ST.th))];
+ SK.forEach(k=>{const v=sk[k.id],f=v==null?null:v>=8?'C6EFCE':v>=5?'FFEB9C':'FFC7CE';SS.push([C(k.name,ST.val),C(v==null?'—':v,cs(ST.cen,f,true)),C((D.skillNotes||{})[id+'_'+k.id]||'',ST.val)])});
+ SS.push([C('')]);SS.push(span(L('Evaluation history','سجل التقييمات'),ST.sec,3));const hr=SS.length-1;
+ SS.push([L('Skill','المهارة'),L('Rating','التقييم'),L('Date','التاريخ')].map(x=>C(x,ST.th)));
+ D.skillAssess.filter(x=>x.stu===id).slice().sort((p,q)=>p.ts-q.ts).forEach(x=>SS.push([C((D.skills.find(k=>k.id===x.skill)||{}).name||'',ST.val),C(x.lvl,ST.cen),DT(new Date(x.ts).toISOString().slice(0,10))]));
+ const wsk=mkws(SS,[30,20,40],[{s:{r:hr,c:0},e:{r:hr,c:2}}]);XLSX.utils.book_append_sheet(wb,wsk,L('Skills','المهارات'));
+ if(ARB)wb.Workbook={Views:[{RTL:true}]};
+ return wb}
+async function exportStu(id){await loadStyledXlsx();if(!window.XLSX){toast('The Excel library did not load. Check your connection and try again.','err');return}const s=D.students.find(x=>x.id===id);if(!s)return;try{const fn=fname(s.name)+'_Student_Data.xlsx';const ok=await dl(fn,wbBlob(buildStuXlsx(id)),'');toast(ok?'Saved '+fn:'Export was cancelled','ok')}catch(e){toast('Excel export failed: '+(e&&e.message||e),'err')}}
+async function mergeXlsx(el){const f=el.files[0];if(!f)return;await loadStyledXlsx();if(!window.XLSX){alert('The Excel library did not load. Check your connection and try again.');return}
+ f.arrayBuffer().then(b=>{const old=XLSX.read(b,{type:'array'}),nw=buildXlsx();
+  old.SheetNames.filter(n=>/^(Quiz - .*|Students|Attendance|Live points|Quizzes|Practical skills)$/.test(n)).forEach(n=>{delete old.Sheets[n]});old.SheetNames=old.SheetNames.filter(n=>!/^(Quiz - .*|Students|Attendance|Live points|Quizzes|Practical skills)$/.test(n));
+  nw.SheetNames.forEach(n=>{if(!old.Sheets[n])old.SheetNames.push(n);old.Sheets[n]=nw.Sheets[n]});
+  dl(f.name.replace(/\.xls$/i,'.xlsx'),new Blob([XLSX.write(old,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'');el.value=''}).catch(()=>alert('Could not read this file'))}
+async function exportXlsx(silent){await loadStyledXlsx();if(!window.XLSX){if(!silent)alert('The Excel library did not load. Check your connection and try again.');return}
+ const c=D.classes.find(x=>x.id===D.curClass);dl('workshop-'+(c?c.name.replace(/[^\w\u0600-\u06FF]+/g,'_'):'class')+'.xlsx',xlsxBlob(),'')}
+async function writeFH(){if(!FH)return;await loadStyledXlsx();if(!window.XLSX)return;const w=await FH.createWritable();await w.write(xlsxBlob());await w.close()}
+function fhSoon(){if(!FH)return;clearTimeout(fhTimer);fhTimer=setTimeout(()=>writeFH().catch(()=>{FH=null}),3000)}
+async function linkFile(){try{if(!window.showSaveFilePicker)throw 0;FH=await showSaveFilePicker({suggestedName:'workshop-data.xlsx',types:[{description:'Excel',accept:{'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':['.xlsx']}}]});await writeFH();alert('Linked. The file updates automatically a few seconds after every change while this page is open. After reopening the page, link it again.')}
+ catch(e){FH=null;if(e&&e.name==='AbortError')return;alert('This browser does not allow linking a file here. It works on Chrome or Edge on a laptop. Use "Export to Excel" instead.')}}
+function togQ(id){const a=D.assess.find(x=>x.id===id);a.closed=!a.closed;save();go();if(a.closed&&D.set.autoXls!==false)exportXlsx(true)}
+function del(k,id,b){if(!b.dataset.sure){b.dataset.sure=1;const o=b.textContent;b.textContent='Click again to confirm';b.style.color='var(--bad)';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent=o;b.style.color=''}},3000);return}
+ if(k==='session'){D.sessions=D.sessions.filter(x=>x.id!==id);delete D.att[id];D.events=D.events.filter(e=>e.sess!==id);if(D.cur===id)D.cur=null;if(attSid===id)attSid=null}
+ if(k==='quiz')D.assess=D.assess.filter(x=>x.id!==id);
+ if(k==='skill'){D.skills=D.skills.filter(x=>x.id!==id);D.skillAssess=D.skillAssess.filter(x=>x.skill!==id)}
+ if(k==='plan')D.plans=D.plans.filter(x=>x.id!==id);
+ if(k==='student'){['behavior','bonusB','bonusQ','bonusNote'].forEach(k=>{if(D[k])delete D[k][id]});D.students=D.students.filter(x=>x.id!==id);D.events=D.events.filter(e=>e.stu!==id);Object.values(D.att).forEach(m=>delete m[id]);D.assess.forEach(a=>delete a.scores[id]);D.skillAssess=D.skillAssess.filter(x=>x.stu!==id);D.plans=D.plans.filter(x=>x.stu!==id);if(pid===id)pid=null}
+ const rmSess=i=>{D.sessions=D.sessions.filter(x=>x.id!==i);delete D.att[i];D.events=D.events.filter(e=>e.sess!==i);if(D.cur===i)D.cur=null;if(attSid===i)attSid=null};
+ const rmStu=i=>{['behavior','bonusB','bonusQ','bonusNote'].forEach(k=>{if(D[k])delete D[k][i]});D.students=D.students.filter(x=>x.id!==i);D.events=D.events.filter(e=>e.stu!==i);Object.values(D.att).forEach(m=>delete m[i]);D.assess.forEach(a=>delete a.scores[i]);D.skillAssess=D.skillAssess.filter(x=>x.stu!==i);D.plans=D.plans.filter(x=>x.stu!==i);if(pid===i)pid=null};
+ const rmSk=c=>{const ids=D.skills.filter(x=>x.cls===c).map(x=>x.id);D.skills=D.skills.filter(x=>x.cls!==c);D.skillAssess=D.skillAssess.filter(x=>!ids.includes(x.skill))};
+ if(k==='allsessions')D.sessions.filter(x=>x.cls===D.curClass).forEach(x=>rmSess(x.id));
+ if(k==='allstudents')D.students.filter(x=>x.cls===D.curClass).forEach(x=>rmStu(x.id));
+ if(k==='allquiz')D.assess=D.assess.filter(a=>a.cls!==D.curClass);
+ if(k==='allskills')rmSk(D.curClass);
+ if(k==='class'){D.sessions.filter(x=>x.cls===id).forEach(x=>rmSess(x.id));D.students.filter(x=>x.cls===id).forEach(x=>rmStu(x.id));D.assess=D.assess.filter(a=>a.cls!==id);rmSk(id);D.classes=D.classes.filter(c=>c.id!==id);if(D.curClass===id)D.curClass=D.classes[0].id}
+ D.audit.push({ts:Date.now(),act:'delete',k,id});save();go()}
+function addAs(){const m=+am.value;if(!at.value.trim()||!(m>0)){alert('Title and a positive max score are required');return}qOpen=uid();D.assess.push({id:qOpen,title:at.value.trim(),date:ad.value||today(),max:m,scores:{},cls:D.curClass});save();go()}
+function setSc(a,s,el){const as=D.assess.find(x=>x.id===a);if(el.value===''){delete as.scores[s]}else{const v=+el.value;if(v<0||v>as.max){alert('Score must be between 0 and '+as.max);el.value=as.scores[s]??'';return}D.audit.push({ts:Date.now(),act:'grade',a,s,old:as.scores[s],v});as.scores[s]=v}save()}
+function addSk(){if(!kn.value.trim())return;D.skills.push({id:uid(),name:kn.value.trim(),cls:D.curClass});save();go();document.getElementById('kn').focus()}
+function arSk(id){D.skills.find(x=>x.id===id).arch=true;save();go()}
+function setSk(stu,skill,el){if(el.value==='')return;const v=+el.value;if(!(v>=1&&v<=10)){alert('Rating must be 1 to 10');el.value='';return}D.skillAssess.push({stu,skill,lvl:v,n:10,ts:Date.now()});save()}
+function addPlan(stu){if(!pt.value.trim()){alert('Plan title is required');return}D.plans.push({id:uid(),stu,title:pt.value.trim(),problem:pp.value,target:pg.value,due:pd.value,status:'Active',created:Date.now()});save();go()}
+function plan(id,k,v){D.plans.find(p=>p.id===id)[k]=v;save()}
+async function dl(name,text,type){const blob=text instanceof Blob?text:new Blob(['\ufeff'+text],{type});
+ try{if(typeof claude!=='undefined'&&claude.use){const d=await claude.use('downloads');if(d){await d.save({filename:name,data:blob});return true}}}catch(e){if(e&&e.code==='declined')return false}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();return true}
+const csvOf=c=>'name,status\n'+D.students.filter(s=>s.cls===c.id).sort(stuCmp).map(s=>`"${s.name.replace(/"/g,'""')}",${s.status}`).join('\n');
+function expStu(){const c=D.classes.find(x=>x.id===D.curClass);if(c)dl('students-'+fname(c.name)+'.csv',csvOf(c),'text/csv')}
+async function expAllStu(){for(const c of D.classes){await dl('students-'+fname(c.name)+'.csv',csvOf(c),'text/csv')}}
+const HDR=/^\s*(name|names|student|students|student name|full ?name|الاسم|اسم|الاسماء|الأسماء|اسم الطالب|اسم الطالبة|الطالب|الطلاب|اسماء الطلاب|أسماء الطلاب)\s*$/i;
+const HDR2=/(^|\s)(name|names|student|students|اسم|الاسم|اسماء|أسماء|طالب|طلاب|الطالب|الطلاب)(\s|$)/i;
+const isNm=v=>typeof v==='string'&&/[A-Za-z\u0600-\u06FF]/.test(v)&&!/^[\d\s\/\-.:]+$/.test(v)&&v.trim().length>=2&&v.trim().length<=60;
+const AD=s=>String(s??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+const nn=v=>AD(v==null||v instanceof Date?'':v).trim().toLowerCase();
+const COL=new Intl.Collator(['ar','en'],{numeric:true,sensitivity:'base'});
+const FEMS='فاطمة مريم ماريا سارة ساره منة منى مي مها ميار ميرنا مروة مرفت مروى ملك ملاك منار منال مديحة ميادة نادين نادية نجلاء ندى نهى نهال نورهان نوران نيرة نسمة نعمة نجوى هاجر هبة هدى هدير هديل هالة هنا هناء هند هيام هنادي وفاء ولاء وعد ورد وردة يارا ياسمين ياسمينا يسرا يمنى يقين أسماء اسماء آية ايه اية أميرة اميرة أماني اماني ابتسام إسراء اسراء ألاء الاء إلهام الهام إيمان ايمان بسمة بسملة بسنت بيسان تسنيم تقوى جنة جنى جميلة جيهان حبيبة حنان حنين حياة خلود خديجة داليا دينا دانيا دعاء ديما رانيا رنا رنيم رهف رودينا روان ريم ريهام ريتال رحمة رضوى رقية رجاء زينب زهراء زينة سلمى سلوى سمر سمية سناء سهى سهير سالي سلسبيل شيماء شهد شروق شيرين صفاء صفية صابرين ضحى عائشة عايدة عبير علياء عفاف عزة غادة غدير فرح فريدة فيروز كوثر كريمان لبنى ليلى لمياء لينا ليان لمى لجين لانا ماجدة نبيلة نيللي نورا نجاة هيفاء رشا رباب ريما رزان تالا تاليا جودي جوري mary sara sarah mona fatma mariam mai nada hana salma yara rana';
+let _F=null;const fem=n=>(_F||(_F=new Set(FEMS.split(' ').map(x=>normName(x)))),_F.has(normName(String(n).trim().split(/\s+/)[0])));
+function stuCmp(a,b){const ao=a.ord!=null,bo=b.ord!=null;if(ao&&bo)return a.ord-b.ord;if(ao!==bo)return ao?-1:1;const fa=fem(a.name),fb=fem(b.name);if(fa!==fb)return fa?1:-1;return COL.compare(normName(a.name),normName(b.name))}
+const byName=(a,b)=>COL.compare(normName(a.name),normName(b.name));
+const normName=s=>nn(s).replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ');
+const tidy=s=>String(s).replace(/\s+/g,' ').trim();
+const META=/^(total|totals|average|avg|mean|sum|max(imum)?( score| marks?)?|min(imum)?|out of|full marks?|date|المجموع|الاجمالي|المتوسط|الدرجه النهايه|النهايه العظمي|الدرجه العظمي|التاريخ|تاريخ|الحد الاقصي)\s*[:：]?$/i;
+const NONAME1=/^(ال)?(محاضر\S*|غياب\S*|حضور\S*|حصص|اسبوع|ترم|فصل|مجموعه|اجمالي|مجموع|نسبه|ملاحظ\S*|ملحوظ\S*|مواد|ماده|ورشه|عملي|نظري|section|lecture\S*|attendance|absent\S*|present|week|semester|term|group|class|notes?|total\S*|summary|remarks?|comment\S*|sheet\S*)(\s|\d|$)/i,NONAME2=/^(حصه|يوم|day|session|جلسه|week|lecture)\s*\d+/i;
+const notName=v=>{const t=normName(v);return META.test(t)||NONAME1.test(t)||NONAME2.test(t)};
+const MAXR=/^(max(imum)?( score| marks?)?|out of|full marks?|الدرجه النهايه|النهايه العظمي|الدرجه العظمي|الحد الاقصي)\s*[:：]?$/i;
+const SKIPH=/total|sum|avg|average|mean|rank|%|percent|المجموع|مجموع|المتوسط|النسبه|النسبة|الترتيب|التقدير|^م\.?$|serial|^id$|phone|mobile|tel|تليفون|هاتف|موبايل|رقم|كود|code|فصل|class|group|مجموعه|مجموعة|notes?|ملاحظ|comment|behavio|bonus|سلوك|بونص/i;
+const PRES=/^(p|present|pres|حاضر|حاضره|حاضرة|حضور|حضر|ح|✓|✔|✅|yes|y|true|نعم|late|متاخر|متأخر|تاخير|تأخير)$/;
+const ABS=/^(a|absent|abs|غائب|غايب|غائبه|غائبة|غياب|غ|✗|✘|x|❌|no|n|false|لا)$/;
+const EXC=/^(excused|عذر|بعذر|اجازه|اجازة|إجازة|مجاز)$/;
+function stat(v,bin){const t=nn(v);if(t==='')return null;if(bin&&t==='1')return 'Present';if(bin&&t==='0')return 'Absent';if(PRES.test(t))return 'Present';if(ABS.test(t))return 'Absent';if(EXC.test(t))return 'Excused';return undefined}
+function num(v){if(typeof v==='number')return v;if(v instanceof Date||v==null)return NaN;const t=AD(v).trim().replace(/٫/g,'.').replace(/,/g,'.').replace(/%$/,'');return /^-?\d+(\.\d+)?$/.test(t)?parseFloat(t):NaN}
+const iso=(y,m,d)=>(m<1||m>12||d<1||d>31)?null:y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+function pdate(v){if(v instanceof Date)return isNaN(v)?null:new Date(v.getTime()+432e5).toISOString().slice(0,10);
+ if(typeof v==='number')return v>30000&&v<80000?new Date(Math.round((v-25569)*864e5)).toISOString().slice(0,10):null;
+ const t=AD(v??'').trim();let m;
+ if(m=t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/))return iso(+m[1],+m[2],+m[3]);
+ if(m=t.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/)){let y=+m[3],d=+m[1],mo=+m[2];if(y<100)y+=2000;if(mo>12&&d<=12)[d,mo]=[mo,d];return iso(y,mo,d)}
+ if(m=t.match(/^(\d{1,2})[-\/.](\d{1,2})$/))return iso(new Date().getFullYear(),+m[2],+m[1]);
+ return null}
+const niceMax=m=>[5,10,15,20,25,30,40,50,60,100].find(x=>x>=m)||Math.ceil(m/10)*10;
+const tr=R=>{const W=Math.max(0,...R.map(r=>r.length));return Array.from({length:W},(_,c)=>R.map(r=>r[c]??''))};
+function detectCol(rows){const W=Math.max(0,...rows.map(r=>r.length));let best=0,bs=-1;
+ for(let c=0;c<W;c++){const set=new Set();let hdr=false;rows.forEach((r,i)=>{const v=r[c];if(isNm(v)&&!HDR.test(v)&&!notName(v))set.add(normName(v));if(i<6&&typeof v==='string'&&HDR.test(v))hdr=true});
+  const sc=set.size+(hdr?1000:0);if(sc>bs){bs=sc;best=c}}return best}
+function mkItem(sn,hs,pairs,kind,date,mrv){const vals=pairs.map(p=>num(p[1])).filter(x=>!isNaN(x));
+ const m=hs.match(/(?:\/|out of|من|max\.?)\s*(\d+(?:\.\d+)?)/i)||hs.match(/\(\s*(\d+(?:\.\d+)?)\s*\)\s*$/);let mx=m?+m[1]:null,known=!!mx;
+ if(!mx&&mrv!=null&&num(mrv)>0){mx=num(mrv);known=true}if(!mx)mx=vals.length?niceMax(Math.max(...vals)):10;
+ let title=hs.replace(/\s*[\(\[]?\s*(?:\/|out of|من|max\.?)\s*\d+(?:\.\d+)?\s*[\)\]]?\s*$/i,'').replace(/\s*\(\s*\d+(?:\.\d+)?\s*\)\s*$/,'').trim()||hs;if(/^\d+$/.test(title))title='Quiz '+title;
+ return{sheet:sn,header:hs,kind,date:date||'',label:hs,title,max:mx,maxKnown:known,pairs}}
+function analyzeSheet(sn,rows0){
+ const clean=R=>R.filter(r=>r&&r.some(v=>String(v??'').trim()!==''));
+ const isH=v=>typeof v==='string'&&(HDR.test(v)||(v.trim().length<=28&&HDR2.test(nn(v))));
+ const okName=v=>isNm(v)&&!isH(v)&&!notName(v);
+ const score=R=>{const c=detectCol(R),s=new Set();R.forEach(r=>{if(okName(r[c]))s.add(normName(r[c]))});return{c,n:s.size,h:R.slice(0,6).some(r=>typeof r[c]==='string'&&HDR.test(r[c]))}};
+ let R=clean(rows0);if(R.length<2)return null;
+ const a=score(R);let c=a.c;const T=clean(tr(R)),b=T.length>1?score(T):{n:0,c:0,h:false};
+ if(a.h&&a.n>=2){}else if((b.h&&b.n>=2)||(b.n>a.n*1.5&&b.n>=2)){R=T;c=b.c}else if(a.n<2)return null;
+ const hr0=R.findIndex(r=>r.some(v=>isH(v)));if(hr0>=0){const cc=R[hr0].findIndex(v=>isH(v));if(cc>=0)c=cc}const fd=R.findIndex((r,i)=>(hr0<0||i>hr0)&&okName(r[c]));if(fd<0)return null;
+ let hi=hr0>=0?hr0:-1;if(hi<0)for(let i=fd-1;i>=0;i--){if(notName(R[i][c]))continue;if(R[i].filter(v=>String(v??'').trim()!=='').length>=2){hi=i;break}}
+ const rowsD=R.slice(fd).filter(r=>okName(r[c]));let maxRow=null,dateRow=null;
+ R.forEach(r=>{const k=normName(r[c]);if(MAXR.test(k))maxRow=r;if(/^(date|التاريخ|تاريخ)\s*[:：]?$/.test(k))dateRow=r});
+ const W=Math.max(...R.map(r=>r.length)),pairsOf=j=>rowsD.map(r=>[r[c],r[j]]),hdrOf=j=>hi>=0?R[hi][j]:'';
+ const dateAbove=j=>{for(let i=0;i<fd;i++){if(i===hi)continue;if(notName(R[i][c]))continue;const d=pdate(R[i][j]);if(d)return d}return dateRow?pdate(dateRow[j]):null};
+ const items=[],longF=rowsD.length>=6&&new Set(rowsD.map(r=>normName(r[c]))).size<rowsD.length*.6;
+ const sa=/attendance|حضور|غياب/i.test(sn),sq=/quiz|grade|mark|score|درج|امتحان|اختبار|كويز/i.test(sn);
+ if(!longF){for(let j=0;j<W;j++){if(j===c)continue;const hv=hdrOf(j),hs=String(hv instanceof Date?'':hv??'').trim(),dh=pdate(hv)||dateAbove(j);
+  const ne=rowsD.map(r=>r[j]).filter(v=>String(v??'').trim()!=='');if(ne.length<Math.max(1,Math.ceil(rowsD.length*.2)))continue;
+  const nS=ne.filter(v=>{const t=stat(v,false);return t!==undefined&&t!==null}).length,nB=ne.filter(v=>{const t=nn(v);return t==='0'||t==='1'}).length,nN=ne.filter(v=>!isNaN(num(v))).length,L=ne.length;
+const attW=/حضور|غياب|attendance|absent|present|حاضر|غائب/i.test(hs),quizW=/quiz|test|exam|grade|score|mark|درج|امتحان|اختبار|كويز|تقييم/i.test(hs),idW=/^(id|student ?id|code|student ?code|no\.?|رقم|الرقم|رقم الطالب|الرقم الجامعي|الرقم القومي|كود|الكود)$/i.test(hs),grW=/^(group|class|section|مجموعة|مجموعه|المجموعة|المجموعه|فصل|الفصل|شعبة|الشعبة)$/i.test(hs),sessW=/^(day|session|lecture|lec|week)\s*[-#.]?\s*\d+|^(حصة|حصه|يوم|محاضرة|محاضره|اسبوع|أسبوع)\s*\d*/i.test(hs),nums=ne.map(num).filter(x=>!isNaN(x));let kind=null,cf='high',why='';
+ const seq=nums.length>=3&&nums.length===L&&nums.every((x,i)=>i===0||x===nums[i-1]+1),binAll=nB===L,hasDate=!!pdate(hv);
+ if(grW){kind='skip';why='class/group column is ignored'}
+ else if(idW&&!attW&&!quizW){kind='skip';why='ID/code column is ignored'}
+ else if(seq&&!attW&&!quizW&&!hasDate){kind='skip';why='row numbers (1, 2, 3 …)'}
+ else if(nS/L>=.6||((nS+nB)/L>=.8&&nS>0)){kind='att';why='Present/Absent values'}
+ else if(binAll){if(attW||sessW||hasDate){kind='att';why=attW?'header says attendance':sessW?'header names a session':'header is a date'}
+  else if(quizW){kind='quiz';cf='med';why='only 0/1, but the header looks like a quiz'}
+  else{kind='att';cf='med';why='only 0 and 1, no header'}}
+ else if(nN/L>=.7){if(SKIPH.test(hs)||Math.max(...nums)>=1e5){kind='skip';cf='med';why='looks like a total, rank, phone or other number'}
+  else{kind='quiz';cf=(quizW||/\/\s*\d|out of|من/i.test(hs))?'high':'med';why=cf==='high'?'numeric scores, header looks like a quiz':'numeric scores (values other than 0/1)'}}
+ if(!kind)continue;
+ const it=mkItem(sn,hs||'Column '+(j+1),pairsOf(j),kind,dh,maxRow?maxRow[j]:null);it.conf=cf;it.why=why;it.bin=binAll&&kind==='att'&&!attW&&!sessW&&!hasDate&&nS===0;
+ if(kind==='quiz'&&binAll&&!it.maxKnown)it.max=1;items.push(it)}}
+ else{const cs=[];for(let j=0;j<W;j++){if(j===c)continue;const ne=rowsD.map(r=>r[j]).filter(v=>String(v??'').trim()!=='');if(!ne.length)continue;
+   cs.push({j,dt:ne.filter(v=>pdate(v)).length/ne.length,st:ne.filter(v=>{const t=stat(v,true);return t!==undefined&&t!==null}).length/ne.length,nu:ne.filter(v=>!isNaN(num(v))).length/ne.length,dist:new Set(ne.map(nn)).size/ne.length})}
+  const dC=cs.filter(x=>x.dt>=.7).sort((x,y)=>y.dt-x.dt)[0],sC=cs.filter(x=>x.st>=.7&&x!==dC).sort((x,y)=>y.st-x.st)[0];
+  if(dC&&sC){const g={};rowsD.forEach(r=>{const d=pdate(r[dC.j]);if(d)(g[d]=g[d]||[]).push([r[c],r[sC.j]])});Object.keys(g).sort().forEach(d=>items.push(mkItem(sn,d,g[d],'att',d)))}
+  const nC=cs.filter(x=>x.nu>=.7&&x!==dC&&x!==sC&&!SKIPH.test(String(hdrOf(x.j)||''))).sort((x,y)=>y.nu-x.nu)[0],tC=cs.filter(x=>x!==dC&&x!==sC&&x!==nC&&x.nu<.5&&x.dist<=.4)[0];
+  if(nC&&(tC||dC)){const g={};rowsD.forEach(r=>{if(String(r[nC.j]??'').trim()==='')return;const k=tC?tidy(r[tC.j]):'Quiz '+(pdate(r[dC.j])||'');(g[k]=g[k]||[]).push([r[c],r[nC.j]])});Object.keys(g).forEach(k=>items.push(mkItem(sn,k,g[k],'quiz','')))}}
+  const nb=items.filter(x=>x.bin).length,hasQ=items.some(x=>x.kind==='quiz'&&!x.bin);
+  items.forEach(x=>{if(!x.conf){x.conf='med';x.why='long-format table'}if(x.bin&&x.kind==='att'&&x.conf==='med'){if(nb>=3){x.why='0/1 column with no header, one of '+nb+' similar columns'}else if(hasQ){x.conf='low';x.why='unlabeled 0/1 column next to quiz-like columns (could be a pass/fail quiz)'}}});
+  return{items,names:rowsD.map(r=>tidy(r[c])),dups:rowsD.length-new Set(rowsD.map(r=>normName(r[c]))).size,rows:rowsD.length}}
+const KINDS=[['att','Attendance day'],['quiz','Quiz'],['skip','Ignore']];
+const STRATS=[['add','Add new students and records (keep existing values)'],['update','Update matching records (overwrite existing values)'],['newonly','Import only new records (leave existing days/quizzes untouched)'],['skip','Skip duplicates (leave students already in this class untouched)']];
+const has2=v=>v!==undefined&&v!==null&&v!=='';
+function pNames(P){const m=new Map();P.per.forEach(s=>{if(P.sel[s.n])s.names.forEach(n=>{const k=normName(n);if(k&&!m.has(k))m.set(k,n)})});return[...m.values()]}
+function pItems(P){return P.items.filter(it=>P.sel[it.sheet]&&(P.mode==='all'||it.kind==='att'))}
+function smDel(i){impP.items.splice(i,1);go()}
+function smSet(i,k,v){const it=impP.items[i];if(k==='max'){if(+v>0){it.max=+v;it.maxKnown=true}}else{it[k]=v;if(k==='kind'&&it.conf!=='user')it.conf='user'}go()}
+function smAmb(k,v){impP.amb[k]=v;go()}
+// match an imported name to existing students of the class; never merges silently when unsure
+function smMatch(cur,n){const k=normName(n),ex=cur.filter(s=>normName(s.name)===k);
+ if(ex.length===1)return{st:ex[0]};if(ex.length>1)return{amb:ex,why:'several students share this name'};
+ const tk=k.split(' '),cand=cur.filter(s=>{const t=normName(s.name).split(' ');if(t.length<2||tk.length<2)return false;
+  if([...t].sort().join(' ')===[...tk].sort().join(' '))return true;const sm=t.length<tk.length?t:tk,lg=t.length<tk.length?tk:t;return sm.length>=2&&sm.every(w=>lg.includes(w))});
+ return cand.length?{amb:cand,why:'similar to an existing name'}:{st:null}}
+// the single source of truth for what an import does. dry=true only counts, dry=false writes.
+function smApply(P,dry){const cls=D.curClass,strat=P.strat||'add',S={newStu:0,skipStu:0,sessNew:0,quizNew:0,aNew:0,aSame:0,aUpd:0,aKeep:0,qNew:0,qSame:0,qUpd:0,qKeep:0,mSet:0,mKeep:0,blank:0,inval:0,exc:0,mxDiff:0,amb:[],dups:0};
+ P.per.forEach(x=>{if(P.sel[x.n])S.dups+=x.dups||0});
+ const items=pItems(P).filter(it=>it.kind!=='skip'),names=pNames(P),map=new Map(),cur=D.students.filter(s=>s.cls===cls),idIt=items.find(it=>it.kind==='id');
+ const allOrd=cur.every(s=>s.ord!=null);let oc=Math.max(0,...cur.filter(s=>s.ord!=null).map(s=>s.ord));
+ names.forEach(n=>{const k=normName(n);let r=null;
+  const ip=idIt&&idIt.pairs.find(p=>normName(p[0])===k),idv=ip&&String(ip[1]??'').trim()!==''?tidy(String(ip[1])):'',byId=idv?cur.find(s=>s.sid!=null&&String(s.sid)===idv):null;
+  if(byId)r={st:byId};
+  else{const m=smMatch(cur,n);
+   if(m.st)r={st:m.st};
+   else if(m.amb){const ch=P.amb[k]||'skip';S.amb.push({k,n,why:m.why,names:m.amb.map(x=>x.name),ids:m.amb.map(x=>x.id),ch});
+    if(ch==='new')r={st:null,isNew:true};else if(ch!=='skip'){const x=cur.find(y=>y.id===ch);r=x?{st:x}:null}}
+   else r={st:null,isNew:true}}
+  if(r&&r.isNew){if(!P.addNew)r=null;else{S.newStu++;const st=dry?{id:'~'+k,name:tidy(n),virt:true}:{id:uid(),name:tidy(n),code:nextCode(),cls,status:'Active'};
+    if(!dry){if(allOrd)st.ord=++oc;D.students.push(st)}r={st,fresh:true}}}
+  else if(r&&strat==='skip'){S.skipStu++;r=null}
+  map.set(k,r)});
+ const R=n=>map.get(normName(n));
+ items.forEach(it=>{
+  if(it.kind==='att'){let ses=it.date?D.sessions.find(x=>x.cls===cls&&x.date===it.date):D.sessions.find(x=>x.cls===cls&&x.imp&&x.topic===it.label);const ex=!!ses;if(ex&&strat==='newonly')return;
+   const m=ses?(D.att[ses.id]||{}):{},W=[];
+   it.pairs.forEach(([n,v])=>{const r=R(n);if(!r||!r.st)return;const val=stat(v,true);
+    if(val===null){S.blank++;return}if(val===undefined){S.inval++;return}if(val==='Excused'){S.exc++;return}
+    const old=m[r.st.id],ov=old==='Late'?'Present':old;
+    if(!old){S.aNew++;W.push([r.st,val])}else if(ov===val)S.aSame++;else if(strat==='update'){S.aUpd++;W.push([r.st,val])}else S.aKeep++});
+   if(!ex&&W.length){S.sessNew++;if(!dry){ses={id:uid(),date:it.date||today(),topic:it.date?'':it.label,status:'Ended',cls,imp:true};D.sessions.push(ses)}}
+   if(!dry&&W.length){D.att[ses.id]=D.att[ses.id]||{};W.forEach(([st,val])=>{D.att[ses.id][st.id]=val})}}
+  else if(it.kind==='quiz'){const T=normName(it.title||'Quiz');let q=D.assess.find(a=>a.cls===cls&&normName(a.title)===T&&(it.date?a.date===it.date:a.imp));const ex=!!q;if(ex&&strat==='newonly')return;
+   const mx=ex?q.max:it.max;if(ex&&q.max!==it.max)S.mxDiff++;const W=[];
+   it.pairs.forEach(([n,v])=>{const r=R(n);if(!r||!r.st)return;if(String(v??'').trim()===''){S.blank++;return}
+    const x=num(v);if(isNaN(x)||x<0||x>mx){S.inval++;return}
+    const old=ex?q.scores[r.st.id]:undefined;
+    if(!has2(old)){S.qNew++;W.push([r.st,x])}else if(+old===x)S.qSame++;else if(strat==='update'){S.qUpd++;W.push([r.st,x])}else S.qKeep++});
+   if(!ex&&W.length){S.quizNew++;if(!dry){q={id:uid(),title:it.title||'Quiz',date:it.date||today(),max:it.max||10,scores:{},cls,imp:true};D.assess.push(q)}}
+   if(!dry&&W.length)W.forEach(([st,x])=>{q.scores[st.id]=x})}
+  else if(it.kind==='id'||it.kind==='grp'){const f=it.kind==='id'?'sid':'grp';
+   it.pairs.forEach(([n,v])=>{const r=R(n);if(!r||!r.st)return;const x=tidy(String(v??''));if(!x)return;const old=r.st[f];
+    if(!has2(old)){S.mSet++;if(!dry)r.st[f]=x}else if(String(old)!==x){if(strat==='update'){S.mSet++;if(!dry)r.st[f]=x}else S.mKeep++}})}});
+ return S}
+function smBlockers(P){const b=[],V=pItems(P).filter(it=>it.kind!=='skip');if(!pNames(P).length)b.push('Select at least one worksheet that contains students.');
+ V.filter(it=>it.conf==='low').forEach(it=>b.push('Please review "'+it.header+'": '+it.why+'. Change its type, or press "Looks right".'));
+ V.filter(it=>it.kind==='quiz'&&!it.maxKnown).forEach(it=>b.push('Quiz "'+it.title+'" has no maximum score. Enter it (percentages need it).'));return b}
+function smSum(S){const L=[];L.push('New students: '+S.newStu+(S.skipStu?' · existing students skipped: '+S.skipStu:''));
+ L.push('Attendance: '+S.aNew+' new, '+S.aSame+' already identical, '+S.aUpd+' updated, '+S.aKeep+' conflicts kept as they were');
+ L.push('Quizzes: '+S.qNew+' new scores, '+S.qSame+' already identical, '+S.qUpd+' updated, '+S.qKeep+' conflicts kept as they were');
+ L.push('New attendance days: '+S.sessNew+' · new quizzes: '+S.quizNew+(S.mSet?' · ID/group fields filled: '+S.mSet:''));
+ L.push('Blank cells (left as Not Recorded / not graded): '+S.blank+' · unreadable or out-of-range values skipped: '+S.inval);return L}
+function impPrev(){const P=impP,names=pNames(P),S=smApply(P,true),blk=smBlockers(P),
+  vis=P.items.map((it,i)=>[it,i]).filter(([it])=>P.sel[it.sheet]&&(P.mode==='all'||it.kind==='att')),cb={high:['hi','high'],med:['md','check'],low:['lo','uncertain'],user:['hi','set by you']};
+ const have=new Set(D.students.filter(s=>s.cls===D.curClass).map(s=>normName(s.name))),nw=names.filter(n=>!have.has(normName(n)));
+ const smp=it=>{const v=it.pairs.map(p=>p[1]).filter(x=>String(x??'').trim()!=='');return v.length+' values · e.g. '+v.slice(0,3).map(x=>x instanceof Date?'date':String(x)).join(', ')};
+ const flds=(it,i)=>it.kind==='att'?`<input type="date" value="${it.date||''}" aria-label="Date" onchange="smSet(${i},'date',this.value)">${it.date?'':'<div class="lb">no date found, today will be used</div>'}`
+  :it.kind==='quiz'?`<input value="${esc(it.title)}" aria-label="Quiz title" style="width:150px" onchange="smSet(${i},'title',this.value)"> <input type="number" step="any" value="${it.max}" style="width:70px" aria-label="Max score" onchange="smSet(${i},'max',this.value)"> <input type="date" value="${it.date||''}" aria-label="Date" onchange="smSet(${i},'date',this.value)">${it.maxKnown?'':'<div class="lb" style="color:var(--bad)">maximum score not found: enter it</div>'}${(()=>{const bad=it.pairs.filter(p=>{const x=num(p[1]);return !isNaN(x)&&(x>it.max||x<0)}).length;return bad?`<div class="lb" style="color:var(--bad)">${bad} values above the max will be skipped</div>`:''})()}`:'';
+ const kc={};vis.forEach(([it])=>{if(it.kind==='skip')return;const k=it.kind+'|'+(it.kind==='att'?(it.date||it.label):normName(it.title));kc[k]=(kc[k]||0)+1});const dupC=Object.values(kc).filter(x=>x>1).length;
+ const cols=vis.filter(([it])=>it.kind!=='skip').slice(0,8).map(([it])=>it);
+ const sample=names.slice(0,5).map(n=>`<tr><td>${esc(n)}</td>${cols.map(it=>{const p=it.pairs.find(p=>normName(p[0])===normName(n));if(!p)return'<td class="mut">—</td>';const v=p[1];if(it.kind==='att')return`<td>${stat(v,true)||'—'}</td>`;if(it.kind==='quiz'){const x=num(v);return`<td>${isNaN(x)?'—':x}</td>`}return`<td>${esc(tidy(String(v??'')))||'—'}</td>`}).join('')}</tr>`).join('');
+ const issues=[S.blank?S.blank+' blank cells (kept as Not Recorded, never as Absent or zero)':'',S.inval?S.inval+' unreadable or out-of-range values (skipped)':'',S.dups?S.dups+' repeated student rows in the file (last value wins)':'',dupC?dupC+' duplicated columns (same day or quiz twice)':'',S.mxDiff?S.mxDiff+' quizzes already exist with a different maximum (existing maximum is kept)':'',(S.aKeep+S.qKeep)?(S.aKeep+S.qKeep)+' values differ from what is saved (kept unless you choose "Update")':'',S.amb.length?S.amb.length+' names need a decision below':''].filter(Boolean);
+ return `<section><h2>SMART IMPORT — ${esc(P.file)}</h2>
+ ${P.per.length>1?`<div class="row"><span class="lb">Worksheets to import:</span>${P.per.map(x=>`<label class="row" style="margin:0"><input type="checkbox" data-n="${esc(x.n)}" ${P.sel[x.n]?'checked':''} onchange="impP.sel[this.dataset.n]=this.checked;go()"> ${esc(x.n)} <span class="lb">(${x.names.length} students, ${P.items.filter(i=>i.sheet===x.n).length} columns)</span></label>`).join('')}</div>`:''}
+ <p><b>${names.length}</b> students found · <b>${nw.length}</b> new${names.length-nw.length?` · ${names.length-nw.length} already in this class`:''} · <b>${vis.filter(([it])=>it.kind==='att').length}</b> attendance columns · <b>${vis.filter(([it])=>it.kind==='quiz').length}</b> quiz columns</p>
+ <div class="row"><span class="lb">Import:</span><select aria-label="What to import" onchange="impP.mode=this.value;go()"><option value="all" ${P.mode==='all'?'selected':''}>Names + attendance + quiz grades + IDs</option><option value="att" ${P.mode!=='all'?'selected':''}>Names + attendance only</option></select>
+ <select aria-label="Import strategy" onchange="impP.strat=this.value;go()">${STRATS.map(o=>`<option value="${o[0]}" ${P.strat===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+ <label class="row"><input type="checkbox" ${P.addNew?'checked':''} onchange="impP.addNew=this.checked;go()"> Add the new students (${nw.length})</label>
+ ${vis.length?`<div class="row"><span class="lb">Check what each column is. 1 = Present, 0 = Absent, blank = Not Recorded. A quiz score of 0 is never an absence.</span></div><div class="wrap"><table><tr><th>SHEET</th><th>COLUMN</th><th>WHAT IS IT?</th><th>CONFIDENCE</th><th>DETAILS</th><th>VALUES</th><th></th></tr>${vis.map(([it,i])=>`<tr><td>${esc(it.sheet)}</td><td>${esc(it.header)}</td><td><select aria-label="Type" onchange="smSet(${i},'kind',this.value)">${KINDS.map(k=>`<option value="${k[0]}" ${it.kind===k[0]?'selected':''}>${k[1]}</option>`).join('')}</select></td><td><span class="tg ${(cb[it.conf]||cb.med)[0]}">${(cb[it.conf]||cb.med)[1]}</span><div class="lb">${esc(it.why||'')}</div>${it.conf==='low'?`<button class="btn" onclick="smSet(${i},'conf','user')">Looks right</button>`:''}</td><td>${flds(it,i)}</td><td class="lb">${esc(smp(it))}</td><td><button class="btn" onclick="smDel(${i})">Remove</button></td></tr>`).join('')}</table></div>`:'<p class="lb">No attendance or quiz columns were found for this selection. Only the names will be added.</p>'}
+ ${S.amb.length?`<h2>NAMES TO CHECK</h2><p class="lb">These names look like existing students but are not identical. Nothing is merged unless you say so.</p>${S.amb.map(a=>`<div class="li"><span class="n">${esc(a.n)} <span class="lb">${esc(a.why)}: ${esc(a.names.join(' / '))}</span></span><select aria-label="Resolve" data-k="${esc(a.k)}" onchange="smAmb(this.dataset.k,this.value)"><option value="skip" ${a.ch==='skip'?'selected':''}>Skip this student</option><option value="new" ${a.ch==='new'?'selected':''}>Create a new student</option>${a.ids.map((id,j)=>`<option value="${id}" ${a.ch===id?'selected':''}>Same person as ${esc(a.names[j])}</option>`).join('')}</select></div>`).join('')}`:''}
+ ${sample?`<h2>SAMPLE OF THE CLEANED DATA</h2><div class="wrap"><table><tr><th>NAME</th>${cols.map(it=>`<th>${esc(it.kind==='att'?(it.date||it.header):it.title)}</th>`).join('')}</tr>${sample}</table></div>`:''}
+ ${issues.length?`<h2>THINGS TO KNOW</h2>${issues.map(x=>`<div class="al">${esc(x)}</div>`).join('')}`:''}
+ <h2>PROPOSED CHANGES</h2>${smSum(S).map(x=>`<div class="li">${esc(x)}</div>`).join('')}
+ ${blk.length?`<div class="al neg">${blk.map(esc).join('<br>')}</div>`:''}
+ <div class="row"><button class="btn pri" ${blk.length?'disabled':''} onclick="smCommit()">Import</button><button class="btn" onclick="impP=null;go()">Cancel</button></div></section>`}
+function smCommit(){const P=impP,b=smBlockers(P);if(b.length){alert(b.join('\n'));return}
+ const pre=smApply(P,true);if(!confirm('Apply these changes?\n\n'+smSum(pre).join('\n')))return;
+ smApply(P,false);impP=null;save();go();toast('Import finished: '+pre.newStu+' new students, '+(pre.aNew+pre.aUpd)+' attendance marks, '+(pre.qNew+pre.qUpd)+' quiz scores saved.','ok')}
+async function imp(el){const f=el.files[0];if(!f)return;let sheets=[];
+ try{if(/\.xlsx?$/i.test(f.name)){if(!window.XLSX){toast('The Excel reader could not load. Check your connection, or save the sheet as CSV.','err');el.value='';return}
+   const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});sheets=wb.SheetNames.map(n=>({n,rows:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''})}))}
+  else{const t=(await f.text()).replace(/^\ufeff/,'');let ok=false;
+   if(window.XLSX){try{const wb=XLSX.read(t,{type:'string',raw:true});sheets=wb.SheetNames.map(n=>({n:f.name,rows:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''})}));ok=sheets.length>0}catch(e){ok=false}}
+   if(!ok){const d=t.includes('\t')?'\t':(t.split(';').length>t.split(',').length?';':',');sheets=[{n:f.name,rows:t.split(/\r?\n/).map(l=>l.split(d).map(x=>x.replace(/^"|"$/g,'').trim()))}]}}}
+ catch(e){toast('Could not read this file','err');el.value='';return}
+ const per=[],items=[];sheets.forEach(s=>{const a=analyzeSheet(s.n,s.rows);if(!a)return;a.items.forEach(x=>items.push(x));per.push({n:s.n,names:a.names,dups:a.dups||0,score:a.items.length*1000+a.names.length})});
+ el.value='';if(!per.length){toast('No student names could be found in this file.','err');return}
+ const sel={};if(per.length===1)sel[per[0].n]=true;else sel[per.slice().sort((x,y)=>y.score-x.score)[0].n]=true;
+ impP={file:f.name,items,per,sel,addNew:true,mode:'all',strat:'add',amb:{}};tab='Students';pid=null;go()}
+// ---- export UX + dashboard/profile PDF and PNG ----
+let toastT=null;
+function toast(m,k){let e=document.getElementById('toast');if(!e){e=document.createElement('div');e.id='toast';e.setAttribute('role','status');document.body.appendChild(e)}
+ e.className='t-'+(k||'ok');e.textContent=m;e.style.display='block';clearTimeout(toastT);if(k!=='busy')toastT=setTimeout(()=>{e.style.display='none'},k==='err'?9000:4500)}
+const fname=s=>String(s).replace(/[^\w\u0600-\u06FF]+/g,'_').replace(/^_+|_+$/g,'')||'Student';
+const LIBS={h2c:['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',()=>window.html2canvas],pdf:['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>window.jspdf&&window.jspdf.jsPDF]};
+function loadLib(k){const[u,ok]=LIBS[k];if(ok())return Promise.resolve();return new Promise((res,rej)=>{const s=document.createElement('script');s.src=u;s.onload=()=>ok()?res():rej(new Error('lib'));s.onerror=()=>rej(new Error('lib'));document.head.appendChild(s)})}
+// off-screen copy of the hero + current view, so the capture has a fixed width and no sticky header / buttons
+function buildHold(stu){const cs=getComputedStyle(document.body),h=document.createElement('div');h.id='expHold';
+ h.style.cssText='position:absolute;left:-12000px;top:0;width:1100px;padding-bottom:12px;background-color:'+cs.backgroundColor+';background-image:'+cs.backgroundImage+';background-size:44px 44px';
+ const hero=document.getElementById('hero').cloneNode(true),main=document.getElementById('app').cloneNode(true);
+ if(stu){const t=hero.querySelector('.ht');if(t)t.textContent=stu.name}
+ h.appendChild(hero);h.appendChild(main);
+ h.querySelectorAll('.noexp,input[type=file]').forEach(e=>e.remove());
+ // Arabic letters only join when the browser draws a whole word: html2canvas splits text into single letters whenever letter-spacing is set, so switch it off in the capture copy
+ h.querySelectorAll('*').forEach(e=>{e.style.setProperty('letter-spacing','normal','important');e.style.setProperty('word-break','normal','important')});h.querySelectorAll('.wrap').forEach(e=>{e.style.overflow='visible'});if(D.set.lang==='ar')trDom(h);return h}
+// html2canvas draws an inline <svg> as a standalone image, so CSS variables and the page stylesheet are lost: resolve them first
+function fixSvgs(root){const rs=getComputedStyle(document.documentElement),v=n=>rs.getPropertyValue(n).trim()||'#000',sub=x=>x.replace(/var\((--[\w-]+)\)/g,(_,n)=>v(n));
+ root.querySelectorAll('svg').forEach(sv=>{const r=sv.getBoundingClientRect();if(r.width)sv.setAttribute('width',r.width);if(r.height)sv.setAttribute('height',r.height);
+  sv.querySelectorAll('*').forEach(e=>{['fill','stroke','stop-color'].forEach(a=>{const x=e.getAttribute(a);if(x&&x.includes('var('))e.setAttribute(a,sub(x))});const st=e.getAttribute('style');if(st&&st.includes('var('))e.setAttribute('style',sub(st))});
+  sv.querySelectorAll('text').forEach(e=>{if(!e.getAttribute('fill'))e.setAttribute('fill',v('--ink'));e.setAttribute('font-size',parseFloat(e.style.fontSize)||11);if(e.style.fontWeight)e.setAttribute('font-weight',e.style.fontWeight);e.setAttribute('font-family','Archivo, Noto Sans Arabic, Arial, sans-serif')})})}
+// choose page cuts between cards / table rows instead of through them
+function pickBreaks(hold,k,pageH,H){const t0=hold.getBoundingClientRect().top,R=e=>{const r=e.getBoundingClientRect();return[(r.top-t0)*k,(r.bottom-t0)*k]};
+ const blocks=[...hold.querySelectorAll('section,.stats,.al')].map(R).filter(([a,b])=>b-a<=pageH*.95),cands=[...hold.querySelectorAll('section,.stats,.al,tr,.li')].map(e=>R(e)[1]).sort((a,b)=>a-b),ok=y=>!blocks.some(([a,b])=>a+3<y&&y<b-3),out=[];let s=0;
+ while(s<H-3){const lim=s+pageH;if(lim>=H){out.push([s,H]);break}let e=lim;for(let i=cands.length-1;i>=0;i--){const c=cands[i];if(c<=lim&&c>s+pageH*.3&&ok(c)){e=Math.round(c);break}}out.push([s,e]);s=e}
+ return out}
+function pdfFromCanvas(cv,hold,sc){const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'}),PW=210,PH=297,pageH=Math.floor(cv.width*PH/PW);
+ pickBreaks(hold,sc,pageH,cv.height).forEach(([a,b],i)=>{if(i)pdf.addPage();pdf.setFillColor(25,49,41);pdf.rect(0,0,PW,PH,'F');
+  const t=document.createElement('canvas');t.width=cv.width;t.height=b-a;const x=t.getContext('2d');x.fillStyle='#193129';x.fillRect(0,0,t.width,t.height);x.drawImage(cv,0,a,cv.width,b-a,0,0,cv.width,b-a);
+  pdf.addImage(t.toDataURL('image/jpeg',.92),'JPEG',0,0,PW,(b-a)*PW/cv.width)});
+ return pdf.output('blob')}
+async function exportView(kind,fmt,id,btn){const stu=kind==='stu'?D.students.find(x=>x.id===id):null;if(kind==='stu'&&!stu){toast('Student not found','err');return}
+ const file=(stu?fname(stu.name)+'_Dashboard':'Workshop_Dashboard_'+today())+'.'+fmt,old=btn&&btn.textContent;let hold=null;
+ if(btn){btn.disabled=true;btn.textContent='Working…'}toast('Preparing '+fmt.toUpperCase()+'… this can take a few seconds','busy');
+ try{await loadLib('h2c');if(fmt==='pdf')await loadLib('pdf');try{if(document.fonts&&document.fonts.ready)await document.fonts.ready}catch(e){}
+  hold=buildHold(stu);document.body.appendChild(hold);fixSvgs(hold);await new Promise(r=>setTimeout(r,80));
+  const w=hold.offsetWidth,h=hold.offsetHeight,sc=Math.max(1,Math.min(2,Math.sqrt(14e6/(w*h)))),cv=await window.html2canvas(hold,{scale:sc,backgroundColor:'#193129',useCORS:true,logging:false});
+  if(!cv.width||!cv.height)throw new Error('the page rendered empty');
+  const blob=fmt==='png'?await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(new Error('PNG encoding failed (the dashboard may be too large for this browser)')),'image/png')):pdfFromCanvas(cv,hold,sc);
+  const ok=await dl(file,blob,'');toast(ok?'Saved '+file:'Export was cancelled','ok')}
+ catch(e){toast('Export failed: '+(e&&e.message==='lib'?'could not load the export library. Check your connection and try again.':(e&&e.message||e)),'err')}
+ finally{if(hold)hold.remove();if(btn){btn.disabled=false;btn.textContent=old}}}
+const SAFE=/^[\w-]*$/;
+function idsOK(o){if(!o||typeof o!=='object'||Array.isArray(o))return false;for(const k of['students','sessions','assess','skills','plans','classes']){if(o[k]===undefined)continue;if(!Array.isArray(o[k]))return false;for(const x of o[k]){if(!x||typeof x!=='object'||!SAFE.test(String(x.id))||(x.cls!=null&&!SAFE.test(String(x.cls))))return false}}return o.curClass==null||SAFE.test(String(o.curClass))}
+let SNAPS=null;const SNAPMAX=10;
+async function idbKeys(){try{const d=await idb();const v=await new Promise((res,rej)=>{const r=d.transaction('kv').objectStore('kv').getAllKeys();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});d.close();return v}catch(e){return[]}}
+async function idbDel(k){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=res;t.onerror=()=>rej(t.error)});d.close()}catch(e){}}
+async function snapKeys(){return(await idbKeys()).map(String).filter(x=>x.startsWith('snap:')).sort()}
+async function snapPrune(){const a=await snapKeys();for(const k of a.slice(0,Math.max(0,a.length-SNAPMAX)))await idbDel(k)}
+async function snapNow(){if(!D.students.length)return;await idbSet('snap:'+new Date().toISOString().slice(0,19),JSON.stringify(D));await snapPrune()}
+async function snapDaily(){if(!D.students.length)return;const day='snap:'+today();if((await snapKeys()).some(k=>k.startsWith(day)))return;await idbSet(day,JSON.stringify(D));await snapPrune()}
+async function loadSnaps(){SNAPS=(await snapKeys()).reverse();if(tab==='Settings')go()}
+function loadData(o){D=Object.assign({},DEF,o);D.set=Object.assign({},DEF.set,D.set);fixData();save();SNAPS=null;go()}
+async function restSnap(k){const j=await idbGet(k);let o;try{o=JSON.parse(j)}catch(e){alert('Invalid backup file');return}if(!idsOK(o)){alert('Invalid backup file');return}if(!confirm('Replace the current data with this snapshot? The current data is saved as a snapshot first.'))return;await snapNow();loadData(o)}
+function snapSec(){if(SNAPS===null)loadSnaps();return `<section><h2>AUTOMATIC SNAPSHOTS</h2><p class="lb">A snapshot of your data is saved automatically once a day on this device (the last ${SNAPMAX} are kept).</p>${SNAPS===null?'<span class="mut">Loading…</span>':SNAPS.map(k=>`<div class="li"><span class="n mono">${esc(k.slice(5).replace('T',' '))}</span><button class="btn" onclick="restSnap('${esc(k)}')">Restore this snapshot</button></div>`).join('')||'<span class="mut">No snapshots yet.</span>'}</section>`}
+function bak(){D.lastBackup=Date.now();dl('backup-'+today()+'.json',JSON.stringify(D),'application/json');save();go()}
+function rest(el){const f=el.files[0];if(!f)return;f.text().then(async x=>{let o;try{o=JSON.parse(x.replace(/^\ufeff/,''))}catch(e){alert('Invalid backup file');return}if(!idsOK(o)){alert('Invalid backup file');return}if(!confirm('Replace the current data with this backup? The current data is saved as a snapshot first.'))return;await snapNow();loadData(o)})}
+function demo(){if(!confirm('Add fictional DEMO students?'))return;['One','Two','Three','Four'].forEach(n=>D.students.push({id:uid(),name:'[DEMO] '+n,code:'D'+n,cls:D.curClass,status:'Active',demo:true}));save();go()}
+function rmDemo(){const ids=D.students.filter(s=>s.demo).map(s=>s.id);ids.forEach(i=>['behavior','bonusB','bonusQ','bonusNote'].forEach(k=>{if(D[k])delete D[k][i]}));D.students=D.students.filter(s=>!s.demo);D.events=D.events.filter(e=>!ids.includes(e.stu));D.assess.forEach(a=>ids.forEach(i=>delete a.scores[i]));save();go()}
+let barSig='',curSig='';
+function renderBar(){renderBk();renderSync();const el=document.getElementById('alertbar'),A=tab==='Alerts'?[]:alerts().filter(a=>a.k!=='pos'&&a.st==='new');curSig=A.map(a=>a.s.id+a.m).join('|');
+ if(!A.length||curSig===barSig){el.innerHTML='';return}
+ el.innerHTML=`<div class="abar" role="alert"><div style="flex:1">${A.slice(0,3).map(a=>`<div><b>${esc(a.s.name)}</b> — ${esc(a.m)}</div>`).join('')}${A.length>3?`<div>+${A.length-3} more</div>`:''}</div><button class="btn" onclick="tab='Alerts';pid=null;go()">View all</button><button class="btn" onclick="barSig=curSig;renderBar()">Dismiss</button></div>`}
+function hero(){const c=D.classes.find(x=>x.id===D.curClass),st=pid&&tab==='Students'?D.students.find(x=>x.id===pid):null;
+ document.getElementById('hero').className='';document.getElementById('hero').innerHTML=`<div class="hw"><div class="ht">${esc(t(tab))}</div></div><div class="gl"><span>${esc(c?c.name:'')}</span><b>${act().length}</b><span>students</span></div>`}
+function syncLabel(){return !saveOK?'⚠ SAVE FAILED — NOT STORED':SY.st==='synced'?'SAVED · SYNCED ☁':SY.st==='syncing'?'SYNCING…':SY.st==='error'?'SAVED ON DEVICE · SYNC ERROR (retrying)':SY.st==='noaccess'?'SAVED ON DEVICE · NO SYNC ACCESS':'SAVED ON THIS DEVICE ONLY'}
+function stTxt(){const s=document.getElementById('save');if(s)s.textContent=syncLabel()}
+function engCode(){return 'ENG-'+Math.abs([...String(SY.uid)].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7)).toString(36).toUpperCase().padStart(6,'0').slice(0,6)}
+let PERSIST=null,idbReady=false,idbT=null,tipHide=false;
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('wt_store',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbSet(k,v){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error)});d.close()}catch(e){}}
+async function idbGet(k){try{const d=await idb();const v=await new Promise((res,rej)=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});d.close();return v}catch(e){return undefined}}
+function idbSoon(){if(!idbReady)return;clearTimeout(idbT);idbT=setTimeout(()=>idbSet(KEY,lastSnap),600)}
+async function protectStorage(){try{if(navigator.storage&&navigator.storage.persist){PERSIST=(await navigator.storage.persisted())||(await navigator.storage.persist())}}catch(e){PERSIST=null}
+ const had=D.students.length||D.assess.length||D.sessions.length,m=await idbGet(KEY);
+ if(!had&&m){try{const x=JSON.parse(m);if(x&&((x.students||[]).length||(x.assess||[]).length)){D=Object.assign({},DEF,x);D.set=Object.assign({},DEF.set,D.set);fixData();idbReady=true;save();go();return}}catch(e){}}
+ idbReady=true;idbSoon()}
+function iosTip(){if(tipHide||typeof navigator==='undefined')return false;const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);const sa=navigator.standalone===true||(typeof matchMedia!=='undefined'&&matchMedia('(display-mode: standalone)').matches);return ios&&!sa}
+function syncSoon(){if(!SY.col||SY.conflict||SY.st==='noaccess')return;SY.dirty=true;if(!SY.first)SY.first=Date.now();clearTimeout(SY.timer);SY.timer=setTimeout(push,Date.now()-SY.first>8000?0:1500)}
+function syncNow(){if(SY.col&&!SY.conflict){SY.st=SY.st==='noaccess'?'local':SY.st;clearTimeout(SY.timer);push()}}
+async function push(){if(!SY.col||SY.busy||SY.conflict)return;SY.busy=true;SY.dirty=false;SY.first=0;SY.st='syncing';stTxt();
+ try{const j=JSON.stringify(D),ch=[];for(let i=0;i<j.length;i+=80000)ch.push(j.slice(i,i+80000));
+  for(let i=0;i<ch.length;i++){if(!SY.chunks||SY.chunks[i]!==ch[i])await SY.col.doc('p'+i).set({d:ch[i]})}
+  const ts=Date.now();await SY.col.doc('meta').set({n:ch.length,ts,by:SY.dev});
+  for(let i=ch.length;SY.chunks&&i<SY.chunks.length;i++)await SY.col.doc('p'+i).delete();
+  SY.chunks=ch;SY.ts=ts;SY.st='synced';try{localStorage.setItem('wt_sync_'+SY.uid,'1')}catch(e){}}
+ catch(e){if(e&&e.code==='invalid_argument'&&!SY.chunks)SY.st='noaccess';else{SY.st='error';SY.dirty=true;clearTimeout(SY.timer);SY.timer=setTimeout(push,8000)}}
+ SY.busy=false;if(SY.dirty&&SY.st!=='error')syncSoon();stTxt();renderSync()}
+async function pull(meta){const parts=[];for(let i=0;i<meta.n;i++){const d=await SY.col.doc('p'+i).get();if(!d.exists)throw new Error('missing');parts.push(d.data().d)}
+ D=Object.assign({},DEF,JSON.parse(parts.join('')));D.set=Object.assign({},DEF.set,D.set);fixData();
+ SY.ts=meta.ts;SY.chunks=parts;undoStack=[];lastSnap=JSON.stringify(D);try{localStorage.setItem(KEY,lastSnap);localStorage.setItem('wt_sync_'+SY.uid,'1')}catch(e){}SY.st='synced';stTxt();go()}
+function subscribeSync(){if(SY.unsub)return;SY.unsub=SY.col.doc('meta').onSnapshot(s=>{if(!s.exists)return;const m=s.data();if(m.ts>SY.ts&&m.by!==SY.dev&&!SY.dirty&&!SY.busy)pull(m).catch(()=>{})},()=>{})}
+async function initSync(){if(STANDALONE)return;try{if(typeof claude==='undefined'||!claude.use){SY.off=true;renderSync();return}const[db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user){SY.off=true;renderSync();return}const uid=await user.id();if(!uid){SY.off=true;renderSync();return}
+ SY.uid=uid;SY.col=db.collection('data/users/'+uid);const m=await SY.col.doc('meta').get();
+ if(m.exists){const localHas=D.students.length>0||D.assess.length>0||D.sessions.length>0;let synced=false;try{synced=!!localStorage.getItem('wt_sync_'+uid)}catch(e){}
+  if(localHas&&!synced){SY.conflict=m.data();SY.st='local';stTxt();renderSync();return}
+  await pull(m.data())}
+ else{SY.st='local';await push()}
+ subscribeSync();stTxt()}catch(e){SY.st='local';stTxt()}}
+async function useCloud(){const m=SY.conflict;SY.conflict=null;try{localStorage.setItem('wt_prev_local',JSON.stringify(D))}catch(e){}try{await pull(m);subscribeSync()}catch(e){SY.st='error'}renderSync()}
+async function useLocal(){SY.conflict=null;SY.chunks=null;await push();subscribeSync();renderSync()}
+function renderSync(){const el=document.getElementById('synbar');if(!el)return;
+ el.innerHTML=SY.conflict?`<div class="abar bk" role="status"><div style="flex:1">Your account already has cloud data. Which one do you want to keep?</div><button class="btn pri" onclick="useCloud()">Use cloud data</button><button class="btn" onclick="useLocal()">Replace cloud with this device</button></div>`:SY.st==='noaccess'?`<div class="abar bk" role="status"><div style="flex:1">Sync is unavailable for your access level, so data stays on this device. Ask the owner to share this page with you as a Contributor.</div></div>`:(!STANDALONE&&SY.off&&!SY.offHide?`<div class="abar bk" role="status"><div style="flex:1">You are not signed in to claude.ai, so your data is saved on this device only. Sign in with your account and reopen this link to use it on your phone and laptop.</div><button class="btn" onclick="SY.offHide=true;renderSync()">OK</button></div>`:(iosTip()?`<div class="abar bk" role="status"><div style="flex:1">On iPhone, Safari can erase a website's data after about a week without opening it. To keep your data safe, add this page to your Home Screen (Share, then Add to Home Screen) and open it from there.</div><button class="btn" onclick="tipHide=true;renderSync()">OK</button></div>`:''))}
+// ---- shell ----
+function go(keep){document.getElementById('nav').innerHTML=tabs.map(x=>`<button aria-current="${x===tab}" onclick="tab='${x}';q='';pid=null;go()">${t(x)}</button>`).join('');
+ const f=document.activeElement,pos=f&&f.selectionStart;document.getElementById('app').innerHTML=V[tab]();document.getElementById('app').setAttribute('data-ok','1');document.documentElement.dir=D.set.lang==='ar'?'rtl':'ltr';document.getElementById('cls').innerHTML=D.classes.map(c=>`<option value="${c.id}" ${c.id===D.curClass?'selected':''}>${esc(c.name)}</option>`).join('')+'<option value="__new">+ Add class</option>';hero();renderBar();trApply();
+ if(keep&&f&&f.placeholder==='Search'){const i=document.querySelector('input[placeholder="Search"]');if(i){i.focus();i.setSelectionRange(pos,pos)}}}
+document.getElementById('lang').onclick=()=>{D.set.lang=D.set.lang==='ar'?'en':'ar';save();go()};
+document.addEventListener('keydown',e=>{
+ if(e.key==='z'&&(e.ctrlKey||e.metaKey)&&!/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)){e.preventDefault();globalUndo();return}
+ if(e.key!=='Enter')return;const el=e.target;if(!/^(INPUT|SELECT)$/.test(el.tagName)||el.type==='file'||el.type==='checkbox'||el.dataset.enter)return;
+ e.preventDefault();const sc=el.closest('.list')||document.getElementById('app');const f=[...sc.querySelectorAll('input:not([type=file]):not([type=checkbox]):not(:disabled),select')],i=f.indexOf(el),n=f[i+1]||el;if(n===el){el.blur();return}n.focus();if(n.select&&n.type!=='date')n.select()});
+D.students.forEach(s=>s.status='Active');
+fixData();
+document.getElementById('undoAll').onclick=globalUndo;
+const cs=document.getElementById('cls'),nc=document.getElementById('newcls');
+cs.onchange=function(){if(this.value==='__new'){cs.hidden=true;nc.hidden=false;nc.value='';nc.focus();return}D.curClass=this.value;pid=null;save();go()};
+const done=()=>{nc.hidden=true;cs.hidden=false;go()};
+nc.onkeydown=e=>{if(e.key==='Escape'){done();return}if(e.key!=='Enter')return;e.preventDefault();const n=nc.value.trim();if(!n){done();return}
+ if(D.classes.some(c=>c.name.toLowerCase()===n.toLowerCase())){alert('Class name already exists');return}
+ const c={id:uid(),name:n};D.classes.push(c);D.curClass=c.id;pid=null;tab='Students';save();nc.hidden=true;cs.hidden=false;go()};
+nc.onblur=()=>{if(!nc.hidden)done()};
+save();go();
+initSync();
+protectStorage();snapDaily();
+</script></body></html>
